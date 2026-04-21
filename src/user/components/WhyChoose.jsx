@@ -1,19 +1,20 @@
 import React from "react";
+import { Clock, ShieldCheck, Globe } from "lucide-react";
 import { motion } from "framer-motion";
-import { FiClock, FiShield, FiGlobe } from "react-icons/fi";
+
 const features = [
   {
-    icon: <FiClock size={28} />,
+    icon: <Clock size={28} />,
     title: "Fast Processing",
     desc: "Quick and efficient transcript handling to save your valuable time.",
   },
   {
-    icon: <FiShield size={28} />,
+    icon: <ShieldCheck size={28} />,
     title: "Secure & Reliable",
     desc: "Your documents are handled with complete safety and confidentiality.",
   },
   {
-    icon: <FiGlobe size={28} />,
+    icon: <Globe size={28} />,
     title: "Worldwide Reach",
     desc: "Serving students and professionals across the globe seamlessly.",
   },
@@ -32,20 +33,18 @@ const WhyChoose = () => {
           className="mb-14"
         >
           <div className="flex items-center justify-center gap-4">
-            <span className="w-12 h-[3px] bg-[#2f4a6d]"></span>
+            <span className="w-12 h-[3px] bg-blue-600"></span>
 
-            <p className="text-sm md:text-base font-bold uppercase text-[#2f4a6d] tracking-wider">
+            <p className="text-sm md:text-base font-bold uppercase text-blue-600 tracking-wider">
               Why Choose Us
             </p>
 
-            <span className="w-12 h-[3px] bg-[#2f4a6d]"></span>
+            <span className="w-12 h-[3px] bg-blue-600"></span>
           </div>
 
-          <h2 className="mt-4 text-3xl md:text-5xl font-black text-[#2f4a6d] tracking-tight">
-            The most <span className="text-[#3b82f6]">Reliable</span> transcript partner.
-          </h2>
+          
 
-          <p className="mt-4 text-[#2f4a6d] opacity-70 max-w-2xl mx-auto text-base font-medium">
+          <p className="mt-4 text-gray-600 max-w-2xl mx-auto text-base">
             With years of experience and a strong pan-India network, we make
             transcript processing simple, fast, and reliable for everyone.
           </p>
@@ -69,12 +68,12 @@ const WhyChoose = () => {
               </div>
 
               {/* TITLE */}
-              <h3 className="mt-6 text-lg font-black text-[#2f4a6d] uppercase tracking-tighter">
+              <h3 className="mt-6 text-lg font-semibold text-[#2f4a6d]">
                 {item.title}
               </h3>
 
               {/* DESC */}
-              <p className="mt-3 text-sm text-[#2f4a6d] opacity-60 leading-relaxed font-bold">
+              <p className="mt-3 text-sm text-gray-500 leading-relaxed">
                 {item.desc}
               </p>
             </motion.div>

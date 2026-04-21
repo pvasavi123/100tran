@@ -29,7 +29,7 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await fetch("http://192.168.1.4:8000/api/verify/", {
+      const response = await fetch("http://192.168.1.5:8000/api/verify/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -42,36 +42,23 @@ const Login = () => {
 
       const data = await response.json();
 
-      if (response.ok) {
-        alert("Login Successful ✅");
+    if (response.ok) {
+  alert("Login Successful ✅");
 
-        console.log(data);
+  localStorage.setItem("user", JSON.stringify(data));
 
-        // ✅ store user (optional but useful)
-        localStorage.setItem("user", JSON.stringify(data));
-        if (data.email?.endsWith("@admin.org")) {
-    navigate("/admin");   // 👈 admin route
+  // ✅ ONLY THIS
+  if (form.email.endsWith("@admin.org")) {
+    navigate("/admin");
   } else {
-    navigate("/");        // 👈 user route
+    navigate("/");
   }
 
-        // ✅ clear form
-        setForm({
-          email: "",
-          password: ""
-        });
-
-        // ✅ role-based redirect (optional)
-        if (data.role === "Admin") {
-          navigate("/admin-dashboard");
-        } else {
-          navigate("/dashboard"); // change if needed
-        }
-
-      } else {
-        alert(data.error || "Invalid Credentials");
-      }
-
+  setForm({
+    email: "",
+    password: ""
+  });
+}
     } catch (error) {
       console.error(error);
       alert("Server Error");
