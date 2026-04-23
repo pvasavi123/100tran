@@ -137,3 +137,105 @@ const WhoWeAre = () => {
 };
 
 export default WhoWeAre;
+
+/* Mobile Responsiveness Styles */
+const WhoWeAreMobileStyles = `
+@media (max-width: 1024px) {
+  .who-we-section {
+    padding: 3rem 1rem !important;
+  }
+  
+  .who-we-grid {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+  }
+  
+  .who-we-title {
+    font-size: 2rem !important;
+  }
+  
+  .who-we-description {
+    font-size: 1rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .who-we-section {
+    padding: 2rem 0.5rem !important;
+  }
+  
+  .who-we-title {
+    font-size: 1.5rem !important;
+    line-height: 1.2 !important;
+  }
+  
+  .who-we-description {
+    font-size: 0.9rem !important;
+  }
+  
+  .who-we-text {
+    font-size: 1rem !important;
+    line-height: 1.6 !important;
+  }
+  
+  .who-we-card {
+    padding: 1rem !important;
+  }
+  
+  .office-map {
+    height: 180px !important;
+  }
+  
+  .points-list {
+    gap: 0.75rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .who-we-section {
+    padding: 1.5rem 0.25rem !important;
+  }
+  
+  .who-we-title {
+    font-size: 1.25rem !important;
+  }
+  
+  .who-we-description {
+    font-size: 0.85rem !important;
+  }
+  
+  .who-we-text {
+    font-size: 0.9rem !important;
+    line-height: 1.5 !important;
+  }
+  
+  .office-map {
+    height: 150px !important;
+  }
+  
+  .maps-button {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.75rem !important;
+  }
+  
+  .section-header {
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+  }
+  
+  .header-lines {
+    width: 2rem !important;
+  }
+}
+`;
+
+// Inject mobile styles into the document
+if (typeof window !== 'undefined') {
+  const styleId = 'who-we-mobile-styles';
+  if (!document.getElementById(styleId)) {
+    const style = document.createElement('style');
+    style.id = styleId;
+    style.textContent = WhoWeAreMobileStyles;
+    document.head.appendChild(style);
+  }
+}

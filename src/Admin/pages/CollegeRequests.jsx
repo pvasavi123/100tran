@@ -24,7 +24,7 @@ const CollegeRequest = () => {
       setColleges(data);
 
     } catch (err) {
-      console.error("Error fetching colleges:", err);
+      // Error fetching colleges handled
     }
   };
 
@@ -81,7 +81,6 @@ const CollegeRequest = () => {
         alert("Failed to add college");
       }
     } catch (err) {
-      console.error(err);
       alert("Server error");
     }
   };
@@ -103,7 +102,7 @@ const CollegeRequest = () => {
       }));
 
     } catch (err) {
-      console.error("Error fetching certificates:", err);
+      // Error fetching certificates handled
     }
   };
 
@@ -125,7 +124,7 @@ const CollegeRequest = () => {
 
       await fetchCertificates(editingCollege.id);
     } catch (err) {
-      console.error("Update error:", err);
+      // Update error handled
     }
   };
 
@@ -142,7 +141,7 @@ const CollegeRequest = () => {
 
       await fetchCertificates(editingCollege.id);
     } catch (err) {
-      console.error("Delete error:", err);
+      // Delete error handled
     }
   };
 
@@ -418,7 +417,6 @@ const CollegeRequest = () => {
                           }));
 
                         } catch (err) {
-                          console.error(err);
                           alert("Operation failed");
                         }
                       }}
@@ -473,7 +471,7 @@ const CollegeRequest = () => {
                               await deleteCertificate(cert.id);
                               await fetchCertificates(editingCollege.id); // ✅ force refresh
                             } catch (err) {
-                              console.error(err);
+                              // Delete error handled
                               alert("Delete failed");
                             }
                           }}

@@ -6,6 +6,8 @@ const Navbar = () => {
   const [servicesDropdown, setServicesDropdown] = useState(false);
   const [collegesDropdown, setCollegesDropdown] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
+  const [mobileCollegesOpen, setMobileCollegesOpen] = useState(false);
 
   const user = JSON.parse(localStorage.getItem("user"));
   const isLoggedIn = !!user;

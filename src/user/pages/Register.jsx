@@ -89,7 +89,7 @@ const Register = () => {
         alert(data.error || JSON.stringify(data));
       }
     } catch (error) {
-      console.error(error);
+      // Error handled
       alert("Server error");
     }
   };

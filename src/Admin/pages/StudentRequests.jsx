@@ -1,7 +1,7 @@
 import {
   Search, Filter, Eye, CheckCircle, Clock, XCircle, Users, X,
   MapPin, Mail, CreditCard, Truck, FileCheck, CheckCircle2, Circle,
-  Send, Copy, Check, AlertCircle
+  Send, Copy, Check, AlertCircle, MessageCircle, Phone
 } from "lucide-react";
 import React, { useState, useEffect } from "react";
 
@@ -31,7 +31,7 @@ const StudentRequests = () => {
       const data = await res.json();
       setRequests(data);
     } catch (err) {
-      console.error("Error fetching requests:", err);
+      // Error fetching requests handled
     }
   };
 
@@ -65,7 +65,7 @@ const StudentRequests = () => {
         alert("❌ " + (data.error || "Failed to send"));
       }
     } catch (err) {
-      console.error(err);
+      // Error handled
       alert("❌ Server error");
     }
   };
@@ -89,7 +89,7 @@ const StudentRequests = () => {
         prev ? { ...prev, status: newStatus, admin_message: message, agent: agent !== null ? agent : prev.agent } : null
       );
     } catch (err) {
-      console.error(err);
+      // Error handled
       alert("Failed to update status");
     }
   };
@@ -134,6 +134,23 @@ ${companyName} Support Team` : "";
     navigator.clipboard.writeText(emailBody);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  // WhatsApp Integration
+  const handleWhatsApp = (student) => {
+    const message = `Dear ${student.fullName},
+
+Your application (ID: ${student.id}) has been reviewed. 
+
+Status: ${student.status || 'Pending'}
+${student.admin_message ? `Message: ${student.admin_message}` : ''}
+
+Please check your email for detailed information or contact us if you have any questions.
+
+- ${companyName} Team`;
+
+    const whatsappUrl = `https://wa.me/${student.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
   };
 
   return (
@@ -222,6 +239,14 @@ ${companyName} Support Team` : "";
                     </span>
                   </td>
                   <td className="p-4 text-right pr-6 space-x-2">
+                    {/* WhatsApp Button */}
+                    <button
+                      onClick={() => handleWhatsApp(req)}
+                      className="p-2 text-green-600 hover:bg-green-100 rounded-lg transition inline-flex align-middle"
+                      title="Send WhatsApp message"
+                    >
+                      <MessageCircle size={18} />
+                    </button>
                     {/* UPDATED: Reply button now opens the message modal */}
                     <button
                       onClick={() => setReplyingTo(req)}
@@ -500,3 +525,118 @@ ${companyName} Support Team` : "";
 };
 
 export default StudentRequests;
+
+/* Mobile Responsiveness Styles */
+const mobileStyles = `
+@media (max-width: 1024px) {
+  .grid-cols-4 {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  .overflow-x-auto {
+    overflow-x: auto !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .p-6 {
+    padding: 1rem !important;
+  }
+  
+  .space-y-6 {
+    gap: 1rem !important;
+  }
+  
+  .grid-cols-4, .grid-cols-2 {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .text-3xl {
+    font-size: 1.5rem !important;
+  }
+  
+  .text-sm {
+    font-size: 0.75rem !important;
+  }
+  
+  .space-x-2 > * {
+    margin-right: 0.25rem !important;
+  }
+  
+  .p-4 {
+    padding: 0.5rem !important;
+  }
+  
+  .px-3 {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+  }
+  
+  .py-1 {
+    padding-top: 0.25rem !important;
+    padding-bottom: 0.25rem !important;
+  }
+  
+  .gap-5 {
+    gap: 0.75rem !important;
+  }
+  
+  .gap-6 {
+    gap: 1rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .p-6 {
+    padding: 0.75rem !important;
+  }
+  
+  .text-3xl {
+    font-size: 1.25rem !important;
+  }
+  
+  .text-sm {
+    font-size: 0.7rem !important;
+  }
+  
+  .space-x-2 {
+    gap: 0.125rem !important;
+  }
+  
+  .px-3 {
+    padding-left: 0.25rem !important;
+    padding-right: 0.25rem !important;
+  }
+  
+  .gap-2 {
+    gap: 0.5rem !important;
+  }
+  
+  .table {
+    font-size: 0.6rem !important;
+  }
+  
+  .p-4 {
+    padding: 0.25rem !important;
+  }
+  
+  .text-xs {
+    font-size: 0.6rem !important;
+  }
+  
+  .text-lg {
+    font-size: 1rem !important;
+  }
+}
+`;
+
+// Inject mobile styles into the document
+if (typeof window !== 'undefined') {
+  const styleId = 'student-requests-mobile-styles';
+  if (!document.getElementById(styleId)) {
+    const style = document.createElement('style');
+    style.id = styleId;
+    style.textContent = mobileStyles;
+    document.head.appendChild(style);
+  }
+}

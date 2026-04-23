@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { FiMail, FiPhone, FiMapPin, FiMessageSquare, FiSend } from "react-icons/fi";
+import { MessageCircle } from "lucide-react";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
@@ -25,7 +26,7 @@ export default function Contact() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log("SUBMIT WORKING");
+    // Submit working
 
     setLoading(true);
 
@@ -51,7 +52,7 @@ export default function Contact() {
         alert(data.error || "Failed to send message");
       }
     } catch (err) {
-      console.log(err);
+      // Error handled
       alert("Server error");
     } finally {
       setLoading(false);
@@ -62,7 +63,7 @@ export default function Contact() {
 
       {/* HEADER SECTION */}
       <motion.section
-        className="relative overflow-hidden bg-gradient-to-br from-[#2563eb] to-[#1d4ed8] py-16 md:py-20 px-4 text-center"
+        className="relative overflow-hidden bg-gradient-to-br from-[#eff0f1] to-[#f2f2f4] py-16 md:py-20 px-4 text-center"
         initial="hidden"
         animate="visible"
         variants={fadeUp}
@@ -73,10 +74,10 @@ export default function Contact() {
         </div>
 
         <div className="relative z-10 max-w-4xl mx-auto space-y-4 md:space-y-6">
-          <h1 className="text-3xl sm:text-4xl md:text-6xl font-black text-white tracking-tighter">
+          <h1 className="text-3xl sm:text-4xl md:text-6xl font-black text-black tracking-tighter">
             Get in <span className="text-[#60a5fa]">Touch</span>
           </h1>
-          <p className="text-blue-100 text-base md:text-xl font-medium max-w-2xl mx-auto leading-relaxed opacity-90">
+          <p className="text-black-300 text-base md:text-xl font-medium max-w-2xl mx-auto leading-relaxed opacity-90">
             Have questions about your transcripts? Our team is here to help you navigate your academic journey worldwide.
           </p>
         </div>
@@ -93,7 +94,7 @@ export default function Contact() {
         <div className="max-w-6xl mx-auto bg-white rounded-[30px] md:rounded-[40px] shadow-2xl shadow-blue-900/10 overflow-hidden grid grid-cols-1 lg:grid-cols-5 border border-slate-100">
 
           {/* LEFT INFO PANEL */}
-          <div className="lg:col-span-2 bg-[#3498db] p-8 md:p-16 text-white space-y-8 md:space-y-12 relative overflow-hidden">
+          <div className="lg:col-span-2 bg-gradient-to-br from-[#a2bbf1] to-[#1d4ed8] p-8 md:p-16 text-white space-y-8 md:space-y-12 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-48 md:w-64 h-48 md:h-64 bg-white/5 rounded-full -mr-24 md:-mr-32 -mt-24 md:-mt-32"></div>
 
             <div className="space-y-3 md:space-y-4">
@@ -103,43 +104,53 @@ export default function Contact() {
 
             <div className="space-y-6 md:space-y-8">
               <div className="flex items-center gap-4 md:gap-6 group">
-                <div className="w-12 h-12 md:w-14 md:h-14 bg-white/10 rounded-xl md:rounded-2xl flex items-center justify-center text-[#2ecc71] group-hover:bg-[#2ecc71] group-hover:text-[#3498db] transition-all duration-300">
+                <div className="w-12 h-12 md:w-14 md:h-14 bg-white/10 rounded-xl md:rounded-2xl flex items-center justify-center text-blue-400 group-hover:bg-blue-500 group-hover:text-white transition-all duration-300">
                   <FiPhone size={20} />
                 </div>
                 <div>
                   <p className="text-[8px] md:text-[10px] font-black text-blue-200/50 uppercase tracking-widest">Call Us</p>
-                  <p className="text-base md:text-lg font-bold">+91 99419 91402</p>
+                  <p className="text-base md:text-lg font-bold text-black">+91 99419 91402</p>
                 </div>
               </div>
 
               <div className="flex items-center gap-4 md:gap-6 group">
-                <div className="w-12 h-12 md:w-14 md:h-14 bg-white/10 rounded-xl md:rounded-2xl flex items-center justify-center text-[#2ecc71] group-hover:bg-[#2ecc71] group-hover:text-[#3498db] transition-all duration-300">
+                <div className="w-12 h-12 md:w-14 md:h-14 bg-white/10 rounded-xl md:rounded-2xl flex items-center justify-center text-green-400 group-hover:bg-green-500 group-hover:text-white transition-all duration-300">
+                  <MessageCircle size={20} />
+                </div>
+                <div>
+                  <p className="text-[8px] md:text-[10px] font-black text-blue-200/50 uppercase tracking-widest">WhatsApp Us</p>
+                  <p className="text-base md:text-lg font-bold text-black">+91 99419 91402</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4 md:gap-6 group">
+                <div className="w-12 h-12 md:w-14 md:h-14 bg-white/10 rounded-xl md:rounded-2xl flex items-center justify-center text-red-400 group-hover:bg-red-500 group-hover:text-white transition-all duration-300">
                   <FiMail size={20} />
                 </div>
                 <div>
                   <p className="text-[8px] md:text-[10px] font-black text-blue-200/50 uppercase tracking-widest">Email Us</p>
-                  <p className="text-base md:text-lg font-bold">support@100transcripts.com</p>
+                  <p className="text-base md:text-lg font-bold text-black">support@100transcripts.com</p>
                 </div>
               </div>
 
               <div className="flex items-center gap-4 md:gap-6 group">
-                <div className="w-12 h-12 md:w-14 md:h-14 bg-white/10 rounded-xl md:rounded-2xl flex items-center justify-center text-[#2ecc71] group-hover:bg-[#2ecc71] group-hover:text-[#3498db] transition-all duration-300">
+                <div className="w-12 h-12 md:w-14 md:h-14 bg-white/10 rounded-xl md:rounded-2xl flex items-center justify-center text-orange-400 group-hover:bg-orange-500 group-hover:text-white transition-all duration-300">
                   <FiMapPin size={20} />
                 </div>
                 <div>
                   <p className="text-[8px] md:text-[10px] font-black text-blue-200/50 uppercase tracking-widest">Visit Us</p>
-                  <p className="text-base md:text-lg font-bold">Hyderabad, India</p>
+                  <p className="text-base md:text-lg font-bold text-white">Hyderabad, India</p>
                 </div>
               </div>
             </div>
 
             <div className="pt-6 md:pt-10">
               <div className="p-5 md:p-6 bg-white/5 rounded-2xl md:rounded-3xl border border-white/10 backdrop-blur-sm">
-                <FiMessageSquare className="text-[#2ecc71] mb-3 md:mb-4" size={28} />
+                <FiMessageSquare className="text-green-400 mb-3 md:mb-4" size={28} />
                 <p className="text-xs md:text-sm font-medium text-blue-100 leading-relaxed italic">
                   "The most efficient transcript service I've used. Highly recommended for international students."
                 </p>
-                <p className="mt-3 md:mt-4 text-[9px] md:text-xs font-black uppercase tracking-widest text-[#2ecc71]">— Happy Student</p>
+                <p className="mt-3 md:mt-4 text-[9px] md:text-xs font-black uppercase tracking-widest text-green-400">— Happy Student</p>
               </div>
             </div>
           </div>
@@ -242,4 +253,84 @@ export default function Contact() {
 
     </div>
   );
+}
+
+/* Mobile Responsiveness Styles */
+const mobileStyles = `
+@media (max-width: 768px) {
+  .motion-section {
+    padding: 2rem 1rem !important;
+  }
+  
+  .max-w-6xl {
+    max-width: 100% !important;
+    margin: 0 1rem !important;
+  }
+  
+  .grid-cols-5 {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .p-8, .p-16 {
+    padding: 1.5rem !important;
+  }
+  
+  .text-3xl, .text-4xl, .text-5xl, .text-6xl {
+    font-size: 2rem !important;
+  }
+  
+  .text-2xl {
+    font-size: 1.5rem !important;
+  }
+  
+  .text-lg {
+    font-size: 1rem !important;
+  }
+  
+  .gap-8, .gap-12 {
+    gap: 1rem !important;
+  }
+  
+  .w-12, .w-14 {
+    width: 3rem !important;
+    height: 3rem !important;
+  }
+  
+  .space-y-6, .space-y-8 {
+    gap: 1rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .motion-section {
+    padding: 1rem 0.5rem !important;
+  }
+  
+  .p-8, .p-16 {
+    padding: 1rem !important;
+  }
+  
+  .text-3xl, .text-4xl, .text-5xl, .text-6xl {
+    font-size: 1.5rem !important;
+  }
+  
+  .text-2xl {
+    font-size: 1.25rem !important;
+  }
+  
+  .space-y-5, .space-y-6 {
+    gap: 0.75rem !important;
+  }
+}
+`;
+
+// Inject mobile styles into the document
+if (typeof window !== 'undefined') {
+  const styleId = 'contact-mobile-styles';
+  if (!document.getElementById(styleId)) {
+    const style = document.createElement('style');
+    style.id = styleId;
+    style.textContent = mobileStyles;
+    document.head.appendChild(style);
+  }
 }

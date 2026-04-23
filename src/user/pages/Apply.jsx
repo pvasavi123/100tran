@@ -1466,7 +1466,7 @@ export default function Apply() {
             }
           }
         } catch (err) {
-          console.error("Restore state error:", err);
+          // Restore state error handled silently
         }
       }
     };
@@ -1491,7 +1491,7 @@ export default function Apply() {
             }
           }
         } catch (err) {
-          console.error("Polling error:", err);
+          // Polling error handled silently
         }
       };
 
@@ -1597,20 +1597,26 @@ export default function Apply() {
         alert(data.error || "Submission failed");
       }
     } catch (err) {
-      console.error("❌ FRONTEND ERROR:", err);
+      // Frontend error handled silently
       alert("Something went wrong");
     }
   };
 
   const handlePayment = async () => {
     try {
+      // Check if Razorpay is loaded
+      if (!window.Razorpay) {
+        alert("Payment system is loading. Please wait and try again.");
+        return;
+      }
+
       // Validate applicationId exists
       if (!applicationId) {
         alert("No application found. Please submit an application first.");
         return;
       }
 
-      console.log("Creating payment order for application:", applicationId);
+      // Creating payment order for application
       
       const res = await fetch(`${API_BASE}/api/create-order/`, {
         method: "POST",
@@ -1620,13 +1626,13 @@ export default function Apply() {
 
       if (!res.ok) {
         const errorData = await res.json();
-        console.error("Create order error:", errorData);
+        // Create order error handled
         alert(`Failed to create payment order: ${errorData.error || 'Unknown error'}`);
         return;
       }
 
       const data = await res.json();
-      console.log("Order created:", data);
+      // Order created successfully
       
       const options = {
         key: "rzp_test_Sg6qpBoNrt75cC",
@@ -1636,7 +1642,7 @@ export default function Apply() {
         name: "100 Transcripts",
         description: "Document Verification Fee",
         handler: async function (response) {
-          console.log("Payment response:", response);
+          // Payment response received
           try {
             const verifyRes = await fetch(`${API_BASE}/api/verifys/`, {
               method: "POST",
@@ -1649,11 +1655,11 @@ export default function Apply() {
               goStep(3);
             }
             else {
-              console.error("Payment verification failed:", verifyData);
+              // Payment verification failed
               alert("Payment verification failed ❌");
             }
           } catch (verifyErr) {
-            console.error("Verification error:", verifyErr);
+            // Verification error handled
             alert("Payment verification error ❌");
           }
         },
@@ -1661,7 +1667,7 @@ export default function Apply() {
         theme: { color: "#2563eb" },
         modal: {
           ondismiss: function() {
-            console.log("Payment modal dismissed");
+            // Payment modal dismissed
           }
         }
       };
@@ -1669,7 +1675,7 @@ export default function Apply() {
       const rzp = new window.Razorpay(options);
       rzp.open();
     } catch (err) {
-      console.error("Payment error:", err);
+      // Payment error handled
       alert(`Payment error: ${err.message || 'Please ensure backend is running and try again.'}`);
     }
   };

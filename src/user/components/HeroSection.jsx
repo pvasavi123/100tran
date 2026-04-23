@@ -187,3 +187,101 @@ atmosphereAltitude={0.4}
 };
 
 export default HeroSection;
+
+/* Mobile Responsiveness Styles */
+const HeroMobileStyles = `
+@media (max-width: 1024px) {
+  .hero-section {
+    padding: 2rem 1rem !important;
+  }
+  
+  .hero-content {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+  }
+  
+  .hero-text {
+    text-align: center !important;
+  }
+  
+  .hero-title {
+    font-size: 2.5rem !important;
+    line-height: 1.2 !important;
+  }
+  
+  .hero-subtitle {
+    font-size: 1rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 1rem 0.5rem !important;
+  }
+  
+  .hero-title {
+    font-size: 2rem !important;
+    line-height: 1.1 !important;
+  }
+  
+  .hero-subtitle {
+    font-size: 0.9rem !important;
+  }
+  
+  .hero-description {
+    font-size: 0.85rem !important;
+  }
+  
+  .floating-icon {
+    display: none !important;
+  }
+  
+  .globe-container {
+    height: 350px !important;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 1.5rem !important;
+  }
+  
+  .hero-subtitle {
+    font-size: 0.8rem !important;
+  }
+  
+  .hero-description {
+    font-size: 0.75rem !important;
+  }
+  
+  .hero-buttons {
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+  }
+  
+  .globe-container {
+    height: 300px !important;
+  }
+  
+  .spotlight-effect {
+    width: 200px !important;
+    height: 400px !important;
+  }
+}
+`;
+
+// Inject mobile styles into the document
+if (typeof window !== 'undefined') {
+  const styleId = 'hero-mobile-styles';
+  if (!document.getElementById(styleId)) {
+    const style = document.createElement('style');
+    style.id = styleId;
+    style.textContent = HeroMobileStyles;
+    document.head.appendChild(style);
+  }
+}

@@ -87,3 +87,107 @@ const WhyChoose = () => {
 };
 
 export default WhyChoose;
+
+/* Mobile Responsiveness Styles */
+const WhyChooseMobileStyles = `
+@media (max-width: 1024px) {
+  .why-choose-section {
+    padding: 3rem 1rem !important;
+  }
+  
+  .why-choose-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1.5rem !important;
+  }
+  
+  .why-choose-title {
+    font-size: 2rem !important;
+  }
+  
+  .why-choose-description {
+    font-size: 1rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .why-choose-section {
+    padding: 2rem 0.5rem !important;
+  }
+  
+  .why-choose-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+  
+  .why-choose-title {
+    font-size: 1.5rem !important;
+  }
+  
+  .why-choose-description {
+    font-size: 0.9rem !important;
+  }
+  
+  .why-choose-card {
+    padding: 1.5rem !important;
+  }
+  
+  .feature-icon {
+    width: 3rem !important;
+    height: 3rem !important;
+  }
+  
+  .feature-title {
+    font-size: 1.1rem !important;
+  }
+  
+  .feature-description {
+    font-size: 0.85rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .why-choose-section {
+    padding: 1.5rem 0.25rem !important;
+  }
+  
+  .why-choose-title {
+    font-size: 1.25rem !important;
+  }
+  
+  .why-choose-description {
+    font-size: 0.85rem !important;
+  }
+  
+  .why-choose-card {
+    padding: 1rem !important;
+  }
+  
+  .feature-icon {
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+  }
+  
+  .feature-title {
+    font-size: 1rem !important;
+  }
+  
+  .feature-description {
+    font-size: 0.8rem !important;
+  }
+  
+  .header-lines {
+    width: 2rem !important;
+  }
+}
+`;
+
+// Inject mobile styles into the document
+if (typeof window !== 'undefined') {
+  const styleId = 'why-choose-mobile-styles';
+  if (!document.getElementById(styleId)) {
+    const style = document.createElement('style');
+    style.id = styleId;
+    style.textContent = WhyChooseMobileStyles;
+    document.head.appendChild(style);
+  }
+}

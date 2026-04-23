@@ -60,7 +60,7 @@ const Login = () => {
         });
       }
     } catch (error) {
-      console.error(error);
+      // Error handled
       alert("Server Error");
     } finally {
       setLoading(false);

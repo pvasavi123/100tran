@@ -99,4 +99,100 @@ const Partners = () => {
   );
 };
 
+const PartnersMobileStyles = `
+@media (max-width: 1024px) {
+  .partners-section {
+    padding: 3rem 1rem !important;
+  }
+  
+  .partners-title {
+    font-size: 2rem !important;
+  }
+  
+  .partners-description {
+    font-size: 1rem !important;
+  }
+  
+  .partner-card {
+    min-width: 200px !important;
+    height: 120px !important;
+  }
+  
+  .partner-logo {
+    height: 3rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .partners-section {
+    padding: 2rem 0.5rem !important;
+  }
+  
+  .partners-title {
+    font-size: 1.5rem !important;
+  }
+  
+  .partners-description {
+    font-size: 0.9rem !important;
+  }
+  
+  .partner-card {
+    min-width: 180px !important;
+    height: 100px !important;
+    margin: 0 1rem !important;
+  }
+  
+  .partner-logo {
+    height: 2.5rem !important;
+  }
+  
+  .fade-effect {
+    width: 2rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .partners-section {
+    padding: 1.5rem 0.25rem !important;
+  }
+  
+  .partners-title {
+    font-size: 1.25rem !important;
+  }
+  
+  .partners-description {
+    font-size: 0.85rem !important;
+  }
+  
+  .partner-card {
+    min-width: 150px !important;
+    height: 80px !important;
+    margin: 0 0.75rem !important;
+  }
+  
+  .partner-logo {
+    height: 2rem !important;
+  }
+  
+  .fade-effect {
+    width: 1rem !important;
+  }
+  
+  .header-lines {
+    width: 2rem !important;
+  }
+}
+`;
+
+// Inject mobile styles into the document
+if (typeof window !== 'undefined') {
+  const styleId = 'partners-mobile-styles';
+  if (!document.getElementById(styleId)) {
+    const style = document.createElement('style');
+    style.id = styleId;
+    style.textContent = PartnersMobileStyles;
+    document.head.appendChild(style);
+  }
+}
+
 export default Partners;

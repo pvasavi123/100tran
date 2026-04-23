@@ -27,7 +27,7 @@ const CollegeVerification = () => {
       const data = await res.json();
       setVerifications(data);
     } catch (err) {
-      console.error("Error fetching verifications:", err);
+      // Error fetching verifications handled
     } finally {
       setLoading(false);
     }

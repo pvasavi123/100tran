@@ -78,4 +78,101 @@ const UniversitySearch = () => {
   );
 };
 
+/* Mobile Responsiveness Styles */
+const UniversitySearchMobileStyles = `
+@media (max-width: 1024px) {
+  .university-search-section {
+    padding: 3rem 1rem !important;
+  }
+  
+  .university-search-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1rem !important;
+  }
+  
+  .search-title {
+    font-size: 2rem !important;
+  }
+  
+  .search-description {
+    font-size: 1rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .university-search-section {
+    padding: 2rem 0.5rem !important;
+  }
+  
+  .university-search-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+  
+  .search-title {
+    font-size: 1.5rem !important;
+  }
+  
+  .search-description {
+    font-size: 0.9rem !important;
+  }
+  
+  .search-box {
+    padding: 1.5rem !important;
+  }
+  
+  .search-select {
+    padding: 0.75rem !important;
+  }
+  
+  .search-button {
+    padding: 0.75rem !important;
+    font-size: 0.9rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .university-search-section {
+    padding: 1.5rem 0.25rem !important;
+  }
+  
+  .search-title {
+    font-size: 1.25rem !important;
+  }
+  
+  .search-description {
+    font-size: 0.85rem !important;
+  }
+  
+  .search-box {
+    padding: 1rem !important;
+  }
+  
+  .search-select {
+    padding: 0.5rem !important;
+    font-size: 0.85rem !important;
+  }
+  
+  .search-button {
+    padding: 0.5rem !important;
+    font-size: 0.8rem !important;
+  }
+  
+  .header-lines {
+    width: 2rem !important;
+  }
+}
+`;
+
+// Inject mobile styles into the document
+if (typeof window !== 'undefined') {
+  const styleId = 'university-search-mobile-styles';
+  if (!document.getElementById(styleId)) {
+    const style = document.createElement('style');
+    style.id = styleId;
+    style.textContent = UniversitySearchMobileStyles;
+    document.head.appendChild(style);
+  }
+}
+
 export default UniversitySearch;
