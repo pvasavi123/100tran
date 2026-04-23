@@ -52,14 +52,16 @@ from django.db import models
 
 class Application(models.Model):
     STATUS_CHOICES = [
-        ('Pending', 'Pending'),
-        ('Verified', 'Verified'),
-        ('Rejected', 'Rejected'),
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+        ('completed', 'Completed'),
     ]
     fullName = models.CharField(max_length=255)
     email = models.EmailField()
     phone = models.CharField(max_length=15)
     altPhone = models.CharField(max_length=15)
+    payment_status = models.CharField(max_length=20, default="Unpaid")
     requirement = models.CharField(max_length=50)
     referenceNumber = models.CharField(max_length=100, blank=True, null=True)
 
@@ -67,10 +69,13 @@ class Application(models.Model):
     specialCondition = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
+    tracking_id = models.CharField(max_length=100, unique=True, null=True, blank=True)
+    admin_message = models.TextField(null=True, blank=True)
+    agent = models.CharField(max_length=100, null=True, blank=True)
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
-        default='Pending'
+        default='pending'
     )
 
     def __str__(self):
@@ -96,3 +101,16 @@ class Document(models.Model):
 
     def __str__(self):
         return self.name
+
+class Certificate(models.Model):
+    college = models.ForeignKey(
+        College,
+        on_delete=models.CASCADE,
+        related_name="certificates"
+    )
+
+    name = models.CharField(max_length=255)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    
+    def __str__(self):
+        return f"{self.name} - {self.college.name}"

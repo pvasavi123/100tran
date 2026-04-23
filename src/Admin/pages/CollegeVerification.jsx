@@ -15,56 +15,27 @@ const CollegeVerification = () => {
   const [copied, setCopied] = useState(false);
   const companyName = "100 Transcripts";
 
-  const verifications = [
-    {
-      id: "VER-001",
-      college: "Oxford Engineering",
-      country: "UK",
-      student: "NagaRaju",
-      email: "rahul@gmail.com", // Added email for the reply logic
-      date: "2026-04-12",
-      status: "Pending",
-      assigned: "Manager A",
-      mode: "Email",
-      history: [
-        { step: "Application Received", time: "12 Apr, 09:00 AM", done: true },
-        { step: "Documents Sent to College", time: "12 Apr, 02:30 PM", done: true },
-        { step: "Awaiting College Response", time: "In Progress", done: false },
-      ]
-    },
-    {
-      id: "VER-002",
-      college: "Stanford Arts",
-      country: "USA",
-      student: "Vasavi",
-      email: "vasavi@gmail.com",
-      date: "2026-04-11",
-      status: "Verified",
-      assigned: "Manager B",
-      mode: "API",
-      history: [
-        { step: "Application Received", time: "11 Apr, 10:00 AM", done: true },
-        { step: "API Handshake Successful", time: "11 Apr, 11:00 AM", done: true },
-        { step: "Verified by Institution", time: "11 Apr, 01:00 PM", done: true },
-      ]
-    },
-    {
-      id: "VER-003",
-      college: "MIT Tech",
-      country: "USA",
-      student: "Srinu",
-      email: "srinu@gmail.com",
-      date: "2026-04-10",
-      status: "Rejected",
-      assigned: "Manager A",
-      mode: "Manual",
-      history: [
-        { step: "Application Received", time: "10 Apr, 09:00 AM", done: true },
-        { step: "Manual Review", time: "10 Apr, 10:30 AM", done: true },
-        { step: "Mismatch Found", time: "10 Apr, 04:00 PM", done: true },
-      ]
-    },
-  ];
+  const [verifications, setVerifications] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // ✅ Dynamic API Base
+  const API_BASE = `http://${window.location.hostname}:8000`;
+
+  const fetchVerifications = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/api/verifications/`);
+      const data = await res.json();
+      setVerifications(data);
+    } catch (err) {
+      console.error("Error fetching verifications:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  React.useEffect(() => {
+    fetchVerifications();
+  }, []);
 
   // 🟠 NEW: Email logic
   const emailBody = replyingTo ? `Dear ${replyingTo.student},
@@ -136,7 +107,22 @@ ${companyName} Support Team` : "";
             </tr>
           </thead>
           <tbody>
-            {verifications.map((item) => (
+            {loading ? (
+              <tr>
+                <td colSpan="9" className="px-4 py-8 text-center text-slate-500">
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                    Loading verifications...
+                  </div>
+                </td>
+              </tr>
+            ) : verifications.length === 0 ? (
+              <tr>
+                <td colSpan="9" className="px-4 py-8 text-center text-slate-500">
+                  No approved applications found for verification.
+                </td>
+              </tr>
+            ) : verifications.map((item) => (
               <tr key={item.id} className="border-t hover:bg-blue-50/30 transition-colors">
                 <td className="px-4 py-3 font-medium text-slate-700">{item.college}</td>
                 <td className="px-4 py-3 text-slate-600">{item.country}</td>
@@ -144,12 +130,7 @@ ${companyName} Support Team` : "";
                 <td className="px-4 py-3 text-xs text-slate-500">{item.id}</td>
                 <td className="px-4 py-3 text-slate-600">{item.date}</td>
                 <td className="px-4 py-3 text-slate-600">{item.mode}</td>
-                <td className="px-4 py-3">
-                  <select className="border rounded px-2 py-1 text-sm bg-white outline-none">
-                    <option>{item.assigned}</option>
-                    <option>Manager B</option>
-                  </select>
-                </td>
+                <td className="px-4 py-3 text-slate-600">{item.assigned}</td>
                 <td className="px-4 py-3">
                   <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase ${
                     item.status === "Verified" ? "bg-green-100 text-green-600" : 

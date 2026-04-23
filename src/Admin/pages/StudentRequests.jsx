@@ -1,7 +1,7 @@
-import { 
-  Search, Filter, Eye, CheckCircle, Clock, XCircle, Users, X, 
+import {
+  Search, Filter, Eye, CheckCircle, Clock, XCircle, Users, X,
   MapPin, Mail, CreditCard, Truck, FileCheck, CheckCircle2, Circle,
-  Send, Copy, Check, AlertCircle 
+  Send, Copy, Check, AlertCircle
 } from "lucide-react";
 import React, { useState, useEffect } from "react";
 
@@ -19,10 +19,15 @@ const StudentRequests = () => {
   const [copied, setCopied] = useState(false);
   const companyName = "100 Transcripts";
 
-   // ✅ FETCH API
+  // ✅ Dynamic API Base
+  const API_BASE = `http://${window.location.hostname}:8000`;
+
+  // ✅ FETCH API
   const fetchRequests = async () => {
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/applications/");
+      const res = await fetch(`${API_BASE}/api/applications/`, {
+        cache: "no-store"
+      });
       const data = await res.json();
       setRequests(data);
     } catch (err) {
@@ -33,77 +38,85 @@ const StudentRequests = () => {
   useEffect(() => {
     fetchRequests();
   }, []);
-const handleSendEmail = async () => {
-  if (!replyingTo) return;
 
-  try {
-    const res = await fetch("http://127.0.0.1:8000/api/send-notification/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: replyingTo.email,
-        subject: `Action Required: ${issueType} for Request ${replyingTo.id}`,
-        message: emailBody,
-      }),
-    });
+  const handleSendEmail = async () => {
+    if (!replyingTo) return;
 
-    const data = await res.json();
+    try {
+      // 1. Send Email Notification
+      const res = await fetch(`${API_BASE}/api/send-notification/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: replyingTo.email,
+          subject: `Action Required: ${issueType} for Request ${replyingTo.id}`,
+          message: emailBody,
+        }),
+      });
 
-    if (res.ok) {
-      alert("✅ Email sent successfully");
-      setReplyingTo(null);
-    } else {
-      alert("❌ " + (data.error || "Failed to send"));
+      // 2. Also Update Status in DB so student sees it on Waiting Screen
+      await updateStatus(replyingTo.email, "rejected", exactProblem);
+
+      if (res.ok) {
+        alert("✅ Notification sent and Status updated to Rejected");
+        setReplyingTo(null);
+      } else {
+        const data = await res.json();
+        alert("❌ " + (data.error || "Failed to send"));
+      }
+    } catch (err) {
+      console.error(err);
+      alert("❌ Server error");
     }
-  } catch (err) {
-    console.error(err);
-    alert("❌ Server error");
-  }
-};
+  };
 
-const updateStatus = async (id, newStatus) => {
-  try {
-    await fetch(`http://127.0.0.1:8000/api/update-status/${id}/`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ status: newStatus }),
-    });
+  const updateStatus = async (email, newStatus, message = "", agent = null) => {
+    try {
+      const res = await fetch(`${API_BASE}/api/update-status/`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          status: newStatus,
+          admin_message: message,
+          agent: agent
+        }),
+      });
 
-    // ✅ Update UI instantly
-    setRequests(prev =>
-      prev.map(req =>
-        req.id === id ? { ...req, status: newStatus } : req
-      )
-    );
+      if (!res.ok) throw new Error("Update failed");
 
-    // ✅ Update modal also
-    setSelectedStudent(prev =>
-      prev ? { ...prev, status: newStatus } : null
-    );
-
-  } catch (err) {
-    console.error(err);
-    alert("Failed to update status");
-  }
-};
+      await fetchRequests();
+      setSelectedStudent(prev =>
+        prev ? { ...prev, status: newStatus, admin_message: message, agent: agent !== null ? agent : prev.agent } : null
+      );
+    } catch (err) {
+      console.error(err);
+      alert("Failed to update status");
+    }
+  };
 
   const total = requests.length;
-  const pending = requests.filter(r => r.status === "Pending").length;
-  const verified = requests.filter(r => r.status === "Verified").length;
-  const rejected = requests.filter(r => r.status === "Rejected").length;
+  const pending = requests.filter(r => String(r.status || "").toLowerCase().trim() === "pending").length;
+  const verified = requests.filter(r => String(r.status || "").toLowerCase().trim() === "approved").length;
+  const rejected = requests.filter(r => String(r.status || "").toLowerCase().trim() === "rejected").length;
 
   const filtered = requests.filter(r => {
-    const matchesSearch = r.name.toLowerCase().includes(search.toLowerCase()) || r.id.toLowerCase().includes(search.toLowerCase());
-    const matchesStatus = statusFilter === "All" || r.status === statusFilter;
+    const sTerm = (search || "").toLowerCase();
+    const sFilter = (statusFilter || "All").toLowerCase();
+
+    const matchesSearch =
+      String(r.fullName || "").toLowerCase().includes(sTerm) ||
+      String(r.id || "").toLowerCase().includes(sTerm);
+
+    const matchesStatus =
+      statusFilter === "All" ||
+      String(r.status || "").toLowerCase().trim() === sFilter.trim();
+
     return matchesSearch && matchesStatus;
   });
 
   // --- Email Preview Logic ---
-  const emailBody = replyingTo ? `Dear ${replyingTo.name},
+  const emailBody = replyingTo ? `Dear ${replyingTo.fullName},
 
 We have reviewed your request, and there is an issue that requires your attention.
 
@@ -134,7 +147,7 @@ ${companyName} Support Team` : "";
           <p className="text-slate-500">Manage certificates & applications</p>
         </div>
         <button onClick={() => setIsFilterModalOpen(true)} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl shadow hover:bg-blue-700 transition">
-          <Filter size={18}/> Filter
+          <Filter size={18} /> Filter
         </button>
       </div>
 
@@ -168,8 +181,8 @@ ${companyName} Support Team` : "";
 
       {/* Search Input */}
       <div className="bg-white p-3 rounded-xl shadow border border-slate-200 flex items-center gap-3">
-        <Search className="text-gray-400" size={20}/>
-        <input type="text" placeholder="Search by name or ID..." className="w-full outline-none text-slate-700" onChange={(e)=>setSearch(e.target.value)} />
+        <Search className="text-gray-400" size={20} />
+        <input type="text" placeholder="Search by name or ID..." className="w-full outline-none text-slate-700" onChange={(e) => setSearch(e.target.value)} />
       </div>
 
       {/* Data Table */}
@@ -192,7 +205,7 @@ ${companyName} Support Team` : "";
               {filtered.map((req) => (
                 <tr key={req.id} className="border-t hover:bg-slate-50 transition">
                   <td className="p-4">
-                    <div className="font-semibold text-slate-700">{req.name}</div>
+                    <div className="font-semibold text-slate-700">{req.fullName}</div>
                     <div className="text-xs text-blue-500 font-medium">{req.email}</div>
                   </td>
                   <td className="p-4 text-slate-600">{req.id}</td>
@@ -205,20 +218,20 @@ ${companyName} Support Team` : "";
                     </span>
                   </td>
                   <td className="p-4">
-                    <span className={`px-2 py-1 rounded-full text-xs font-bold ${req.status === "Verified" ? "bg-green-100 text-green-600" : req.status === "Pending" ? "bg-yellow-100 text-yellow-600" : "bg-red-100 text-red-600"}`}>
-                      {req.status}
+                    <span className={`px-2 py-1 rounded-full text-xs font-bold ${String(req.status || "").toLowerCase().trim() === "approved" ? "bg-green-100 text-green-600" : String(req.status || "").toLowerCase().trim() === "pending" ? "bg-yellow-100 text-yellow-600" : "bg-red-100 text-red-600"}`}>
+                      {req.status || "Pending"}
                     </span>
                   </td>
                   <td className="p-4 text-right pr-6 space-x-2">
                     {/* UPDATED: Reply button now opens the message modal */}
-                    <button 
-                      onClick={() => setReplyingTo(req)} 
+                    <button
+                      onClick={() => setReplyingTo(req)}
                       className="px-3 py-1 bg-blue-600 text-white rounded-lg text-xs font-bold hover:bg-blue-700 transition"
                     >
                       Reply
                     </button>
                     <button onClick={() => setSelectedStudent(req)} className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition inline-flex align-middle">
-                      <Eye size={18}/>
+                      <Eye size={18} />
                     </button>
                   </td>
                 </tr>
@@ -240,7 +253,7 @@ ${companyName} Support Team` : "";
               <div className="space-y-3">
                 <p className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Status</p>
                 <div className="grid grid-cols-2 gap-2">
-                  {["All", "Pending", "Verified", "Rejected"].map((status) => (
+                  {["All", "Pending", "Approved", "Rejected"].map((status) => (
                     <button
                       key={status}
                       onClick={() => setStatusFilter(status)}
@@ -264,12 +277,12 @@ ${companyName} Support Team` : "";
             <div className="flex-1 p-8 space-y-6 overflow-y-auto border-r border-slate-100">
               <div className="flex justify-between items-center">
                 <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-2"><Mail className="text-blue-600" /> Issue Notification</h2>
-                <button onClick={() => setReplyingTo(null)} className="p-2 hover:bg-slate-100 rounded-full transition"><X size={24}/></button>
+                <button onClick={() => setReplyingTo(null)} className="p-2 hover:bg-slate-100 rounded-full transition"><X size={24} /></button>
               </div>
               <div className="space-y-4">
                 <div>
                   <label className="text-xs font-bold text-slate-500 uppercase ml-1">Recipient</label>
-                  <div className="p-3 bg-slate-50 border rounded-xl font-bold text-slate-700 mt-1">{replyingTo.name} ({replyingTo.email})</div>
+                  <div className="p-3 bg-slate-50 border rounded-xl font-bold text-slate-700 mt-1">{replyingTo.fullName} ({replyingTo.email})</div>
                 </div>
                 <div>
                   <label className="text-xs font-bold text-slate-500 uppercase ml-1">Issue Category</label>
@@ -290,7 +303,7 @@ ${companyName} Support Team` : "";
               <div className="flex justify-between items-center mb-4">
                 <h3 className="font-bold text-slate-700">Preview</h3>
                 <button onClick={handleCopy} className={`flex items-center gap-1 text-xs px-3 py-1 rounded-lg transition ${copied ? 'bg-green-600 text-white' : 'bg-white border text-slate-600 hover:bg-slate-100'}`}>
-                  {copied ? <Check size={14}/> : <Copy size={14}/>} {copied ? 'Copied' : 'Copy'}
+                  {copied ? <Check size={14} /> : <Copy size={14} />} {copied ? 'Copied' : 'Copy'}
                 </button>
               </div>
               <div className="bg-white p-4 rounded-xl border border-slate-200 text-sm text-slate-600 whitespace-pre-wrap flex-1 italic overflow-y-auto">
@@ -313,7 +326,7 @@ ${companyName} Support Team` : "";
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-3xl w-full max-w-4xl shadow-2xl overflow-hidden flex flex-col md:row max-h-[90vh]">
             <div className="flex flex-col md:flex-row w-full h-full overflow-hidden">
-              
+
               {/* Left Column: Details */}
               <div className="flex-1 overflow-y-auto p-8 space-y-8 border-r border-slate-100">
                 <div className="flex justify-between items-center mb-4">
@@ -325,20 +338,19 @@ ${companyName} Support Team` : "";
                 <div className="flex flex-col md:flex-row justify-between items-start gap-6 border-b pb-6">
                   <div className="flex items-center gap-4">
                     <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-2xl font-bold">
-                      {selectedStudent.name.charAt(0)}
+                      {String(selectedStudent.fullName || "?").charAt(0)}
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-slate-800">{selectedStudent.name}</h3>
+                      <h3 className="text-xl font-bold text-slate-800">{selectedStudent.fullName || "N/A"}</h3>
                       <div className="flex flex-col gap-1 text-xs text-slate-500 mt-1 font-medium">
-                        <span className="flex items-center gap-1"><Mail size={12}/> {selectedStudent.email}</span>
-                        <span className="flex items-center gap-1"><MapPin size={12}/> {selectedStudent.district}</span>
+                        <span className="flex items-center gap-1"><Mail size={12} /> {selectedStudent.email}</span>
+                        <span className="flex items-center gap-1"><MapPin size={12} /> {selectedStudent.district}</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className={`p-4 rounded-2xl border flex items-center gap-3 min-w-[180px] ${
-                    selectedStudent.payment === "Paid" ? "bg-green-50 border-green-100" : "bg-yellow-50 border-yellow-100"
-                  }`}>
+                  <div className={`p-4 rounded-2xl border flex items-center gap-3 min-w-[180px] ${selectedStudent.payment === "Paid" ? "bg-green-50 border-green-100" : "bg-yellow-50 border-yellow-100"
+                    }`}>
                     <div className={`p-2 rounded-xl ${selectedStudent.payment === "Paid" ? "bg-green-500 text-white" : "bg-yellow-500 text-white"}`}>
                       <CreditCard size={20} />
                     </div>
@@ -365,37 +377,78 @@ ${companyName} Support Team` : "";
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
-                          <button onClick={() => alert("Opening preview...")} className="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-xs font-bold hover:bg-blue-600 hover:text-white transition">View</button>
-                          <button onClick={() => window.open(doc.url, '_blank')} className="px-3 py-1.5 bg-[#0b2a4a] text-white rounded-lg text-xs font-bold hover:bg-blue-800 transition shadow-sm">Download</button>
+                          <button
+                            onClick={() => {
+                              window.open(doc.url, "_blank");
+                            }}
+                            className="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-xs font-bold hover:bg-blue-600 hover:text-white transition"
+                          >
+                            View
+                          </button>
+                          <button
+                            onClick={() => {
+                              window.open(`http://192.168.1.43:8000/api/download/${doc.id}/`);
+                            }}
+                            className="px-3 py-1.5 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold hover:bg-slate-200 transition"
+                          >
+                            Download
+                          </button>
                         </div>
                       </div>
                     ))}
                   </div>
                 </div>
 
+                {/* Agent Assignment */}
+                <div className="space-y-3 pt-4 border-t border-slate-100">
+                  <h4 className="text-sm font-bold text-slate-800 flex items-center gap-2">
+                    <Users size={18} className="text-blue-600" /> Assign Agent
+                  </h4>
+                  <div className="flex gap-3">
+                    <input
+                      type="text"
+                      placeholder="Enter agent name..."
+                      className="flex-1 border rounded-xl p-2.5 text-sm bg-white outline-none focus:ring-2 focus:ring-blue-500"
+                      value={selectedStudent.agent || ""}
+                      onChange={(e) => setSelectedStudent({ ...selectedStudent, agent: e.target.value })}
+                    />
+                    <button
+                      onClick={() => updateStatus(selectedStudent.email, selectedStudent.status, selectedStudent.admin_message, selectedStudent.agent)}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold hover:bg-blue-700 transition"
+                    >
+                      Assign
+                    </button>
+                  </div>
+                </div>
+
                 {/* Action Buttons */}
                 <div className="pt-6 flex gap-4 border-t border-slate-100">
                   {/* ✅ APPROVE BUTTON */}
-  <button
-    onClick={() => updateStatus(selectedStudent.id, "Verified")}
-    disabled={selectedStudent.status === "Verified"}
-    className={`flex-1 py-3 rounded-2xl font-bold flex items-center justify-center gap-2 shadow-lg transition 
-      ${selectedStudent.status === "Verified"
-        ? "bg-green-200 text-green-800 cursor-not-allowed"
-        : "bg-green-600 text-white hover:bg-green-700 shadow-green-100"}
+                  <button
+                    onClick={() => updateStatus(selectedStudent.email, "approved")}
+                    disabled={selectedStudent.status === "approved"}
+                    className={`flex-1 py-3 rounded-2xl font-bold flex items-center justify-center gap-2 shadow-lg transition 
+      ${selectedStudent.status === "approved"
+                        ? "bg-green-200 text-green-800 cursor-not-allowed"
+                        : "bg-green-600 text-white hover:bg-green-700 shadow-green-100"}
     `}
-  >
-    <CheckCircle size={18}/>
-    {selectedStudent.status === "Verified" ? "Approved ✅" : "Approve"}
-  </button>
+                  >
+                    <CheckCircle size={18} />
+                    {selectedStudent.status === "approved" ? "Approved ✅" : "Approve"}
+                  </button>
 
-  {/* ✅ REJECT BUTTON */}
-  <button
-    onClick={() => updateStatus(selectedStudent.id, "Rejected")}
-    className="flex-1 bg-red-50 text-red-600 py-3 rounded-2xl font-bold hover:bg-red-100 transition border border-red-100 flex items-center justify-center gap-2"
-  >
-    <XCircle size={18}/> Reject
-  </button>
+                  {/* ✅ REJECT BUTTON */}
+                  <button
+                    onClick={() => updateStatus(selectedStudent.email, "rejected")}
+                    disabled={selectedStudent.status === "rejected"}
+                    className={`flex-1 py-3 rounded-2xl font-bold flex items-center justify-center gap-2 transition
+                      ${selectedStudent.status === "rejected"
+                        ? "bg-red-200 text-red-800 cursor-not-allowed"
+                        : "bg-red-50 text-red-600 hover:bg-red-100 border border-red-100"}
+                    `}
+                  >
+                    <XCircle size={18} /> Reject
+                  </button>
                 </div>
               </div>
 
@@ -412,15 +465,14 @@ ${companyName} Support Team` : "";
                   <div className="absolute left-[11px] top-2 bottom-2 w-0.5 bg-slate-200"></div>
                   {selectedStudent.trackingHistory?.map((item, index) => (
                     <div key={index} className="relative pl-10">
-                      <div className={`absolute left-0 top-0 w-6 h-6 rounded-full flex items-center justify-center z-10 border-2 ${ 
-                        item.status === 'completed' ? 'bg-green-500 border-green-500 text-white' : 
-                        item.status === 'failed' ? 'bg-red-500 border-red-500 text-white' : 
-                        item.status === 'current' ? 'bg-white border-blue-500 text-blue-500' : 
-                        'bg-white border-slate-300 text-slate-300' 
-                      }`}>
-                        {item.status === 'completed' ? <CheckCircle2 size={12} /> : 
-                         item.status === 'failed' ? <X size={10} /> : 
-                         <Circle size={10} fill="currentColor" />}
+                      <div className={`absolute left-0 top-0 w-6 h-6 rounded-full flex items-center justify-center z-10 border-2 ${item.status === 'completed' ? 'bg-green-500 border-green-500 text-white' :
+                        item.status === 'failed' ? 'bg-red-500 border-red-500 text-white' :
+                          item.status === 'current' ? 'bg-white border-blue-500 text-blue-500' :
+                            'bg-white border-slate-300 text-slate-300'
+                        }`}>
+                        {item.status === 'completed' ? <CheckCircle2 size={12} /> :
+                          item.status === 'failed' ? <X size={10} /> :
+                            <Circle size={10} fill="currentColor" />}
                       </div>
                       <div className="flex flex-col">
                         <span className={`text-sm font-bold ${item.status === 'upcoming' ? 'text-slate-400' : 'text-slate-700'}`}>

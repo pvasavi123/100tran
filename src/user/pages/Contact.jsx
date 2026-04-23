@@ -7,7 +7,7 @@ const fadeUp = {
   visible: { opacity: 1, y: 0 },
 };
 
-  export default function Contact() {
+export default function Contact() {
 
   const [formData, setFormData] = useState({
     name: "",
@@ -20,42 +20,42 @@ const fadeUp = {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
- const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  console.log("SUBMIT WORKING");
+    console.log("SUBMIT WORKING");
 
-  setLoading(true);
+    setLoading(true);
 
-  try {
-    const res = await fetch("http://192.168.1.5:8000/api/contact/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    });
-
-    const data = await res.json();
-
-    if (res.ok) {
-      alert("Message sent successfully!");
-      setFormData({
-        name: "",
-        email: "",
-        subject: "Transcript Inquiry",
-        message: ""
+    try {
+      const res = await fetch("http://192.168.1.43:8000/api/contact/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
       });
-    } else {
-      alert(data.error || "Failed to send message");
+
+      const data = await res.json();
+
+      if (res.ok) {
+        alert("Message sent successfully!");
+        setFormData({
+          name: "",
+          email: "",
+          subject: "Transcript Inquiry",
+          message: ""
+        });
+      } else {
+        alert(data.error || "Failed to send message");
+      }
+    } catch (err) {
+      console.log(err);
+      alert("Server error");
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    console.log(err);
-    alert("Server error");
-  } finally {
-    setLoading(false);
-  }
-};
+  };
   return (
     <div className="bg-[#f8fafc] min-h-screen pt-28">
 
@@ -70,7 +70,7 @@ const handleSubmit = async (e) => {
           <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#60a5fa] rounded-full blur-[120px]"></div>
           <div className="absolute bottom-[-10%] right-[-10%] w-[30%] h-[30%] bg-[#3b82f6] rounded-full blur-[100px]"></div>
         </div>
-        
+
         <div className="relative z-10 max-w-4xl mx-auto space-y-4 md:space-y-6">
           <h1 className="text-3xl sm:text-4xl md:text-6xl font-black text-white tracking-tighter">
             Get in <span className="text-[#60a5fa]">Touch</span>
@@ -94,7 +94,7 @@ const handleSubmit = async (e) => {
           {/* LEFT INFO PANEL */}
           <div className="lg:col-span-2 bg-[#2f4a6d] p-8 md:p-16 text-white space-y-8 md:space-y-12 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-48 md:w-64 h-48 md:h-64 bg-white/5 rounded-full -mr-24 md:-mr-32 -mt-24 md:-mt-32"></div>
-            
+
             <div className="space-y-3 md:space-y-4">
               <h2 className="text-2xl md:text-3xl font-black tracking-tight">Contact Information</h2>
               <p className="text-blue-100/70 font-medium text-sm md:text-base">Fill out the form and our team will get back to you within 24 hours.</p>
@@ -150,16 +150,16 @@ const handleSubmit = async (e) => {
               <p className="text-slate-500 font-bold text-sm md:text-base">We're excited to hear from you!</p>
             </div>
 
-           <form className="space-y-5 md:space-y-6" onSubmit={handleSubmit}>
+            <form className="space-y-5 md:space-y-6" onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
                 <div className="space-y-1 md:space-y-2">
                   <label className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Full Name</label>
                   <input
                     type="text"
-  name="name"
-  value={formData.name}
-  onChange={handleChange}
-  placeholder="John Doe"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    placeholder="John Doe"
                     className="w-full p-3.5 md:p-4 rounded-xl md:rounded-2xl bg-slate-50 border-2 border-slate-50 focus:border-[#2f4a6d] focus:bg-white outline-none font-bold transition-all text-sm md:text-base"
                   />
                 </div>
@@ -167,10 +167,10 @@ const handleSubmit = async (e) => {
                   <label className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Email Address</label>
                   <input
                     type="email"
-  name="email"
-  value={formData.email}
-  onChange={handleChange}
-  placeholder="john@example.com"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="john@example.com"
                     className="w-full p-3.5 md:p-4 rounded-xl md:rounded-2xl bg-slate-50 border-2 border-slate-50 focus:border-[#2f4a6d] focus:bg-white outline-none font-bold transition-all text-sm md:text-base"
                   />
                 </div>
@@ -179,28 +179,28 @@ const handleSubmit = async (e) => {
               <div className="space-y-1 md:space-y-2">
                 <label className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Subject</label>
                 <select
-  name="subject"
-  value={formData.subject}
-  onChange={handleChange}
-  className="w-full p-3.5 md:p-4 rounded-xl md:rounded-2xl bg-slate-50 border-2 border-slate-50 focus:border-[#2f4a6d] focus:bg-white outline-none font-bold transition-all appearance-none text-sm md:text-base"
->
-  <option>Transcript Inquiry</option>
-  <option>Document Verification</option>
-  <option>Partner with Us</option>
-  <option>Others</option>
-</select>
+                  name="subject"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  className="w-full p-3.5 md:p-4 rounded-xl md:rounded-2xl bg-slate-50 border-2 border-slate-50 focus:border-[#2f4a6d] focus:bg-white outline-none font-bold transition-all appearance-none text-sm md:text-base"
+                >
+                  <option>Transcript Inquiry</option>
+                  <option>Document Verification</option>
+                  <option>Partner with Us</option>
+                  <option>Others</option>
+                </select>
               </div>
 
               <div className="space-y-1 md:space-y-2">
                 <label className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Your Message</label>
                 <textarea
-  name="message"
-  value={formData.message}
-  onChange={handleChange}
-  rows="4"
-  placeholder="How can we help you?"
-  className="w-full p-3.5 md:p-4 rounded-xl md:rounded-2xl bg-slate-50 border-2 border-slate-50 focus:border-[#2f4a6d] focus:bg-white outline-none font-bold transition-all resize-none text-sm md:text-base"
-/>
+                  name="message"
+                  value={formData.message}
+                  onChange={handleChange}
+                  rows="4"
+                  placeholder="How can we help you?"
+                  className="w-full p-3.5 md:p-4 rounded-xl md:rounded-2xl bg-slate-50 border-2 border-slate-50 focus:border-[#2f4a6d] focus:bg-white outline-none font-bold transition-all resize-none text-sm md:text-base"
+                />
               </div>
 
               <button className="w-full bg-[#2f4a6d] text-white py-4 md:py-5 rounded-xl md:rounded-2xl font-black text-base md:text-lg hover:bg-slate-900 shadow-xl shadow-blue-900/20 transition-all active:scale-[0.98] flex items-center justify-center gap-3">
@@ -212,14 +212,14 @@ const handleSubmit = async (e) => {
       </motion.section>
 
       <section className="px-4 pb-16 md:pb-32">
-        <motion.div 
+        <motion.div
           className="max-w-6xl mx-auto bg-gradient-to-br from-[#2f4a6d] to-[#1e324b] text-white text-center p-10 md:p-20 rounded-[40px] md:rounded-[50px] shadow-2xl relative overflow-hidden group"
           initial={{ opacity: 0, scale: 0.9 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
         >
           <div className="absolute top-0 left-0 w-full h-full bg-[#60a5fa] opacity-0 group-hover:opacity-5 transition-opacity duration-700 blur-[100px]"></div>
-          
+
           <div className="relative z-10 space-y-6 md:space-y-8">
             <h2 className="text-2xl md:text-5xl font-black tracking-tight leading-none">
               Ready to Start Your <br />

@@ -293,6 +293,24 @@ def verify_payment(request):
 
             # ✅ SUCCESS (SAVE TO DB HERE)
             print("✅ Payment Verified:", params_dict)
+            
+            # The client should send email or tracking_id as query params
+            email = request.GET.get('email')
+            tracking_id = request.GET.get('tracking_id')
+            
+            try:
+                if tracking_id:
+                    app = Application.objects.get(tracking_id=tracking_id)
+                elif email:
+                    app = Application.objects.get(email=email)
+                else:
+                    app = None
+                
+                if app:
+                    app.payment_status = "Paid"
+                    app.save()
+            except Application.DoesNotExist:
+                pass
 
             return JsonResponse({"status": "success"})
 
@@ -371,7 +389,7 @@ from .serializers import CollegeSerializer
 
 
 @api_view(['GET'])
-def get_colleges(request):
+def get_all_colleges(request):
     colleges = College.objects.all().order_by('-id')
     serializer = CollegeSerializer(colleges, many=True)
     return Response(serializer.data)
@@ -410,6 +428,7 @@ def submit_application(request):
             referenceNumber=data.get("referenceNumber", "").strip() or None,
             termsAccepted=str(data.get("termsAccepted")).lower() == "true",
             specialCondition=str(data.get("specialCondition")).lower() == "true",
+            tracking_id=data.get("trackingId", "").strip() or None,
         )
 
         # ✅ Degrees (OPTIONAL + SAFE)
@@ -459,25 +478,49 @@ def get_applications(request):
 
     data = []
     for app in apps:
+        # Get the first degree info if it exists
+        first_degree = app.degrees.first()
+        university = first_degree.university if first_degree else "N/A"
+        app_type = app.requirement
+
         data.append({
             "id": f"REQ-{app.id:03}",
-            "name": app.fullName,
+            "raw_id": app.id,
+            "fullName": app.fullName,
             "email": app.email,
             "phone": app.phone,
-            "status": "Pending",  # you can make dynamic later
-            "documents": "Uploaded",
-            "payment": "Paid",
-            "university": app.degrees.first().university if app.degrees.exists() else "N/A",
-            "type": app.requirement,
-            "date": app.created_at.strftime("%Y-%m-%d"),
-            "district": "N/A",
+            "university": university,
+            "type": app_type,
+            "payment": app.payment_status,
+            "status": app.status,
+            "agent": app.agent or "Unassigned",
+            "district": getattr(app, 'district', 'N/A'), # if added
             "documentsList": [
-                {"name": doc.name, "status": "Uploaded", "url": doc.file.url}
+                {"id": doc.id, "name": doc.name, "status": "Verified", "url": f"http://192.168.1.43:8000{doc.file.url}"}
                 for doc in app.documents.all()
             ]
         })
-
     return Response(data)
+
+
+from django.http import FileResponse
+from rest_framework.decorators import api_view
+from .models import Document
+
+@api_view(['GET'])
+def download_document(request, id):
+    try:
+        doc = Document.objects.get(id=id)
+
+        return FileResponse(
+            doc.file.open(),
+            as_attachment=True,   # 🔥 THIS FORCES DOWNLOAD
+            filename=doc.name
+        )
+
+    except Document.DoesNotExist:
+        return Response({"error": "File not found"}, status=404)
+    
 
 from django.core.mail import send_mail
 from rest_framework.decorators import api_view
@@ -508,18 +551,208 @@ def send_notification(request):
         print("ERROR:", str(e))
         return Response({"error": str(e)}, status=500)
     
-from rest_framework.response import Response
+from django.views.decorators.csrf import csrf_exempt
+import json
+from django.http import JsonResponse
 from .models import Application
 
-def update_status(request, id):
-    data = json.loads(request.body)
+@csrf_exempt
+def update_status(request, id=None):
+    if request.method in ["POST", "PUT"]:
+        data = json.loads(request.body)
 
+        email = data.get("email")
+        status = data.get("status")
+        agent = data.get("agent")
+        admin_message = data.get("admin_message")
+
+        try:
+            if id:
+                app = Application.objects.get(id=id)
+            elif email:
+                app = Application.objects.get(email=email)
+            else:
+                return JsonResponse({"error": "ID or Email required"}, status=400)
+
+            app.status = status
+            if agent is not None:
+                app.agent = agent
+            if admin_message is not None:
+                app.admin_message = admin_message
+            app.save()
+
+            return JsonResponse({"message": "Status updated"})
+        except Application.DoesNotExist:
+            return JsonResponse({"error": "User not found"}, status=404)
+
+@api_view(['GET'])
+def get_app_status(request, id):
     try:
-        app = Application.objects.get(id=id)  # ❌ only if id is string field
+        app = Application.objects.get(id=id)
+        return Response({
+            "status": app.status,
+            "admin_message": app.admin_message,
+            "payment_status": app.payment_status,
+            "tracking_id": app.tracking_id
+        })
     except Application.DoesNotExist:
-        return JsonResponse({"error": "Not found"}, status=404)
+        return Response({"error": "Application not found"}, status=404)
 
-    app.status = data.get("status")
-    app.save()
+@api_view(['GET'])
+def get_application_status(request):
+    tracking_id = request.GET.get('tracking_id')
+    email = request.GET.get('email')
+    
+    try:
+        if tracking_id:
+            app = Application.objects.get(tracking_id=tracking_id)
+        elif email:
+            app = Application.objects.get(email=email)
+        else:
+            return Response({"error": "Tracking ID or Email required"}, status=400)
+            
+        return Response({
+            "status": app.status,
+            "admin_message": app.admin_message,
+            "payment_status": app.payment_status,
+            "fullName": app.fullName,
+            "tracking_id": app.tracking_id,
+            "application_id": app.id
+        })
+    except Application.DoesNotExist:
+        return Response({"error": "Application not found"}, status=404)
 
-    return JsonResponse({"message": "Updated"})
+from .models import Certificate
+from .serializers import CertificateSerializer
+@api_view(['POST'])
+def add_certificate(request):
+    serializer = CertificateSerializer(data=request.data)
+
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+
+    return Response(serializer.errors, status=400)
+
+
+@api_view(['GET'])
+def get_college_certificates(request, pk):
+    certificates = Certificate.objects.filter(college_id=pk)
+
+    serializer = CertificateSerializer(certificates, many=True)
+    return Response(serializer.data)
+
+
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from .models import Certificate
+from .serializers import CertificateSerializer
+
+
+@api_view(["PUT", "DELETE"])
+def certificate_detail(request, id):
+    try:
+        cert = Certificate.objects.get(id=id)
+    except Certificate.DoesNotExist:
+        return Response({"error": "Certificate not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    # ✅ UPDATE
+    if request.method == "PUT":
+        serializer = CertificateSerializer(cert, data=request.data, partial=True)
+        
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                "message": "Updated successfully",
+                "data": serializer.data
+            }, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # ✅ DELETE
+    if request.method == "DELETE":
+        cert.delete()
+        return Response({"message": "Deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+from django.http import FileResponse
+from .models import Document
+import os
+
+@api_view(['GET'])
+def download_document(request, doc_id):
+    try:
+        doc = Document.objects.get(id=doc_id)
+        response = FileResponse(doc.file.open(), as_attachment=True, filename=doc.name)
+        return response
+    except Document.DoesNotExist:
+        return Response({"error": "Document not found"}, status=404)
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)
+
+@api_view(['POST'])
+def send_notification(request):
+    data = request.data
+    email = data.get('email')
+    subject = data.get('subject')
+    message = data.get('message')
+    
+    if not email or not subject or not message:
+        return Response({"error": "Missing required fields"}, status=400)
+    
+    # In a real app, use send_mail(...)
+    print(f"?? Notification sent to {email}: {subject}")
+    
+    return Response({"message": "Notification sent successfully"})
+
+
+from django.http import JsonResponse
+from .models import College
+ 
+def get_colleges(request):
+    colleges = College.objects.all()
+ 
+    data = [
+        {
+            "id": c.id,
+            "name": c.name
+        }
+        for c in colleges
+    ]
+ 
+    return JsonResponse(data, safe=False)
+ 
+from django.http import JsonResponse
+from .models import Application
+ 
+from django.http import JsonResponse
+from .models import Application
+ 
+def get_verified_applications(request):
+    try:
+        # We filter for 'approved' status (standardized with StudentRequests)
+        apps = Application.objects.filter(status="approved").order_by('-created_at')
+        
+        data = []
+        for app in apps:
+            first_degree = app.degrees.first()
+            university = first_degree.university if first_degree else "N/A"
+            
+            data.append({
+                "id": f"VER-{app.id:03}",
+                "raw_id": app.id,
+                "student": app.fullName,
+                "college": university,
+                "country": "India", # Default or derived from university if possible
+                "email": app.email,
+                "date": app.created_at.strftime("%Y-%m-%d"),
+                "status": "Verified", # UI expectation
+                "assigned": app.agent or "Unassigned",
+                "mode": "Email",
+                "history": [
+                    { "step": "Application Received", "time": app.created_at.strftime("%d %b, %H:%M"), "done": True },
+                    { "step": "Documents Sent to College", "time": "In Progress", "done": False },
+                ]
+            })
+        return JsonResponse(data, safe=False)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)

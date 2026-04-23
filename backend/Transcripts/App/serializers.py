@@ -24,7 +24,7 @@ class AdminUserSerializer(serializers.ModelSerializer):
         fields = ['name', 'email', 'password']
 
 from rest_framework import serializers
-from .models import College
+from .models import College,Certificate
 
 class CollegeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -41,9 +41,15 @@ class DegreeSerializer(serializers.ModelSerializer):
 
 
 class DocumentSerializer(serializers.ModelSerializer):
+    url = serializers.SerializerMethodField()
+
     class Meta:
         model = Document
-        fields = "__all__"
+        fields = ['id', 'name', 'url']
+
+    def get_url(self, obj):
+        request = self.context.get('request')
+        return request.build_absolute_uri(obj.file.url)
 
 
 class ApplicationSerializer(serializers.ModelSerializer):
@@ -67,3 +73,8 @@ class ApplicationSerializer(serializers.ModelSerializer):
             Document.objects.create(application=app, **doc)
 
         return app
+    
+class CertificateSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = Certificate
+            fields = ['id', 'name', 'price', 'college']

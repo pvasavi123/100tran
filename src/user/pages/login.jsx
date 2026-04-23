@@ -29,7 +29,7 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await fetch("http://192.168.1.5:8000/api/verify/", {
+      const response = await fetch("http://192.168.1.43:8000/api/verify/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -42,23 +42,23 @@ const Login = () => {
 
       const data = await response.json();
 
-    if (response.ok) {
-  alert("Login Successful ✅");
+      if (response.ok) {
+        alert("Login Successful ✅");
 
-  localStorage.setItem("user", JSON.stringify(data));
+        localStorage.setItem("user", JSON.stringify(data));
 
-  // ✅ ONLY THIS
-  if (form.email.endsWith("@admin.org")) {
-    navigate("/admin");
-  } else {
-    navigate("/");
-  }
+        // ✅ ONLY THIS
+        if (form.email.endsWith("@admin.org")) {
+          navigate("/admin");
+        } else {
+          navigate("/");
+        }
 
-  setForm({
-    email: "",
-    password: ""
-  });
-}
+        setForm({
+          email: "",
+          password: ""
+        });
+      }
     } catch (error) {
       console.error(error);
       alert("Server Error");

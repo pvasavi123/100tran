@@ -52,8 +52,8 @@ html, body, #root {
 
 /* ══ LEFT PANEL — White Roadmap (matches original UI) ══ */
 .image-panel {
-  width: 280px;
-  min-width: 280px;
+  width: 30%;
+  min-width: 320px;
   height: 100vh;
   position: sticky;
   top: 0;
@@ -113,7 +113,7 @@ html, body, #root {
 
 .rm-step {
   display: flex;
-  gap: 14px;
+  gap: 18px;
   position: relative;
 }
 
@@ -130,7 +130,7 @@ html, body, #root {
 .rm-connector {
   width: 2px;
   flex: 1;
-  min-height: 18px;
+  min-height: 10vh;
   position: relative;
   overflow: hidden;
   /* dashed look via repeating gradient */
@@ -320,7 +320,7 @@ html, body, #root {
 }
 
 /* ══ Portal wrap ══ */
-.portal-wrap { max-width: 820px; margin: 0 auto; padding: 60px 24px 72px; flex: 1; }
+.portal-wrap { max-width: 1100px; margin: 0 auto; padding: 60px 24px 72px; flex: 1; }
 
 /* ══ Hero ══ */
 .hero-header { text-align:center; padding: 8px 0 6px; animation:fadeDown .7s ease both; }
@@ -662,6 +662,18 @@ html, body, #root {
   .step-header { flex-direction: column; text-align: center; gap: 12px; }
   .step-icon { margin: 0 auto; }
 }
+
+/* ══ Guideline Images ══ */
+.guideline-section { margin: 24px 0; padding: 22px; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 20px; }
+.guideline-title { font-size: 15px; font-weight: 800; color: #1e293b; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+.guideline-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.guideline-item { text-align: center; }
+.guideline-img-wrap { position: relative; border-radius: 14px; overflow: hidden; border: 3px solid #fff; box-shadow: 0 8px 24px rgba(15,52,120,0.12); margin-bottom: 10px; aspect-ratio: 1/1; background: #e2e8f0; }
+.guideline-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+.guideline-badge { position: absolute; top: 10px; right: 10px; padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+.badge-ok { background: #22c55e; color: #fff; }
+.badge-no { background: #ef4444; color: #fff; }
+.guideline-label { font-size: 12px; font-weight: 700; color: #475569; line-height: 1.3; }
 `;
 
 /* ─────────────────────────────────────────
@@ -828,11 +840,11 @@ function DigiLockerModal({ onClose, onFetch, targetLabel }) {
    DATA
 ───────────────────────────────────────── */
 const PROC = [
-  { icon: "🧑‍💻", label: "You Apply", hint: "Fill form & upload docs" },
-  { icon: "💳", label: "Make Payment", hint: "Secure one-time service fee" },
-  { icon: "🔍", label: "Admin Verifies", hint: "Our team checks your docs" },
-  { icon: "🏛️", label: "University", hint: "Official board confirms" },
-  { icon: "🎉", label: "You Receive", hint: "Certified docs delivered!" },
+  { icon: "🌐", label: "Go to Website", hint: "User opens 100 Transcripts" },
+  { icon: "📤", label: "Upload Documents", hint: "Fill form & upload docs" },
+  { icon: "🔍", label: "Admin Verification", hint: "Our team checks your docs" },
+  { icon: "💳", label: "Secure Payment", hint: "Secure one-time service fee" },
+  { icon: "🚚", label: "Delivery Successful", hint: "Certified docs delivered!" },
 ];
 
 /* ─────────────────────────────────────────
@@ -849,14 +861,13 @@ const STEP_COLORS = [
   { bg: "#e8f5e9", color: "#2e7d32" },   // green — You Receive
 ];
 
-// Full labels matching the screenshot's left panel
+// Full labels matching the user's requested journey
 const PROC_FULL = [
-  { icon: "🚀", label: "Start the Process", hint: "Initiate application workflow" },
-  { icon: "📤", label: "Upload Documents", hint: "Submit required digital paperwork" },
-  { icon: "💳", label: "Secure Payment", hint: "Instant processing of fees" },
-  { icon: "📋", label: "Document Review", hint: "Awaiting approval from admissions" },
-  { icon: "🏛️", label: "University Verification", hint: "Authenticating applicant info" },
-  { icon: "🏆", label: "Process Completed", hint: "Successfully finalized" },
+  { icon: "🌐", label: "Go to Website", hint: "User opens 100 Transcripts", narrative: "Starting my journey! 🌐" },
+  { icon: "📤", label: "Upload Documents", hint: "Submitting digital paperwork", narrative: "Uploading my docs... 📤" },
+  { icon: "🔍", label: "Admin Verification", hint: "Team checks for authenticity", narrative: "Admin is reviewing! 🔍" },
+  { icon: "💳", label: "Secure Payment", hint: "Processing application fees", narrative: "Paying for service... 💳" },
+  { icon: "🚚", label: "Delivery Successful", hint: "Documents delivered safely", narrative: "Successfully Completed! 🎉" },
 ];
 
 // Extend colors for 6 steps
@@ -898,8 +909,8 @@ function RoadmapPanel({ activeStep }) {
 
   return (
     <div className="image-panel" style={{ background: "#ffffff", boxShadow: "inset -1px 0 0 #f1f5f9" }}>
-      <div className="image-panel-inner" style={{ padding: "32px 24px" }}>
-        
+      <div className="image-panel-inner" style={{ padding: "18vh 24px 40px" }}>
+
         {/* Brand Header */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="panel-brand">
           <h2 style={{ fontSize: 18, color: "#0f172a", marginBottom: 4 }}>Processing Roadmap</h2>
@@ -935,33 +946,12 @@ function RoadmapPanel({ activeStep }) {
                     >
                       {isDone ? "✓" : i + 1}
                     </motion.div>
-                    
+
                     <span style={{ fontSize: 18, filter: !isActive && !isDone ? "grayscale(1) opacity(0.4)" : "none" }}>
                       {step.icon}
                     </span>
 
-                    {/* Traveling Human Icon (The "Video" narrator) */}
-                    {isActive && (
-                      <motion.div
-                        layoutId="video-cursor"
-                        style={{
-                          position: "absolute",
-                          right: -32,
-                          top: "50%",
-                          transform: "translateY(-50%)",
-                          fontSize: 24,
-                          zIndex: 20
-                        }}
-                        animate={{ 
-                          x: [0, 8, 0], 
-                          y: [-2, 2, -2], // Adding a slight walking "bob"
-                          scale: [1, 1.1, 1] 
-                        }}
-                        transition={{ repeat: Infinity, duration: 1 }}
-                      >
-                        🚶
-                      </motion.div>
-                    )}
+                    {/* Narrator Removed as requested */}
                   </motion.div>
 
                   {/* Connecting Line with Fluid Fill */}
@@ -972,7 +962,7 @@ function RoadmapPanel({ activeStep }) {
                         animate={{ height: isDone ? "100%" : "0%" }}
                         transition={{ duration: 0.8 }}
                         style={{
-                          background: `linear-gradient(to bottom, ${col.color}, ${STEP_COLORS6[i+1].color})`,
+                          background: `linear-gradient(to bottom, ${col.color}, ${STEP_COLORS6[i + 1].color})`,
                           width: "100%",
                           position: "absolute",
                           top: 0
@@ -999,7 +989,7 @@ function RoadmapPanel({ activeStep }) {
                   )}
                 </div>
 
-                <div className="rm-content" style={{ paddingBottom: isLast ? 0 : 28 }}>
+                <div className="rm-content" style={{ paddingBottom: isLast ? 0 : "8vh" }}>
                   <motion.div
                     animate={{
                       color: isDone ? "#15803d" : isActive ? col.color : "#94a3b8",
@@ -1016,29 +1006,8 @@ function RoadmapPanel({ activeStep }) {
                   >
                     {step.hint}
                   </motion.div>
-                  
-                  {isActive && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 5 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: 4,
-                        marginTop: 6,
-                        padding: "2px 8px",
-                        background: col.bg,
-                        borderRadius: 100,
-                        border: `1px solid ${col.color}33`,
-                        color: col.color,
-                        fontSize: 9,
-                        fontWeight: 700
-                      }}
-                    >
-                      <span style={{ width: 4, height: 4, borderRadius: "50%", background: col.color, display: "inline-block" }} />
-                      Actively Narrating...
-                    </motion.div>
-                  )}
+
+                  {/* Removed redundant narrating badge to reduce clutter */}
                 </div>
               </motion.div>
             );
@@ -1058,17 +1027,7 @@ function RoadmapPanel({ activeStep }) {
             border: "1px solid #eef2f6"
           }}
         >
-          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
-            <span style={{ fontSize: 10, color: "#94a3b8", fontWeight: 700 }}>VERIFIED SUCCESS</span>
-            <span style={{ fontSize: 10, color: "#2563eb", fontWeight: 900 }}>18K+</span>
-          </div>
-          <div style={{ height: 4, background: "#e2e8f0", borderRadius: 10, overflow: "hidden" }}>
-            <motion.div
-              animate={{ width: ["0%", "100%"] }}
-              transition={{ duration: 16.8, repeat: Infinity, ease: "linear" }}
-              style={{ height: "100%", background: "linear-gradient(90deg, #3b82f6, #60a5fa)", borderRadius: 10 }}
-            />
-          </div>
+          {/* Removed stats box as requested */}
         </motion.div>
       </div>
     </div>
@@ -1140,8 +1099,18 @@ const UpBlock = ({ type, label, options, upProg, upNames, upCompressed, onFile, 
 /* ─────────────────────────────────────────
    STEP COMPONENTS
 ───────────────────────────────────────── */
-const Step0 = ({ form, onChange, degrees, addDeg, rmDeg, chDeg, upProg, upNames, upCompressed, onFile, delFile, onDigiLocker, onSubmit }) => (
+const Step0 = ({ form, onChange, degrees, addDeg, rmDeg, chDeg, upProg, upNames, upCompressed, onFile, delFile, onDigiLocker, onSubmit, adminMessage }) => (
   <form onSubmit={onSubmit}>
+    {adminMessage && (
+      <div className="info-panel amber" style={{ marginBottom: 24, border: "2px solid #fbbf24" }}>
+        <span className="info-icon">⚠️</span>
+        <div style={{ flex: 1 }}>
+          <h3 style={{ color: "#92400e", marginBottom: 4 }}>Action Required / Rejection Message</h3>
+          <p style={{ color: "#b45309", fontSize: "14px", fontWeight: 500 }}>{adminMessage}</p>
+        </div>
+      </div>
+    )}
+
     <div className="step-header">
       <div className="step-icon icon-blue">📄</div>
       <div>
@@ -1245,6 +1214,36 @@ const Step0 = ({ form, onChange, degrees, addDeg, rmDeg, chDeg, upProg, upNames,
       upProg={upProg} upNames={upNames} upCompressed={upCompressed}
       onFile={onFile} onDelFile={delFile} onDigiLocker={onDigiLocker} />
 
+    {/* Photo Guidelines Section */}
+    <div className="guideline-section">
+      <div className="guideline-title">
+        <span>📸</span> Important: Photo & Document Guidelines
+      </div>
+      <div className="guideline-grid">
+        <div className="guideline-item">
+          <div className="guideline-img-wrap">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400" alt="Correct" />
+            <div className="guideline-badge badge-ok">Correct</div>
+          </div>
+          <div className="guideline-label">Clear face, plain background</div>
+        </div>
+        <div className="guideline-item">
+          <div className="guideline-img-wrap">
+            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=400&blur=10" alt="Blurry" />
+            <div className="guideline-badge badge-no">Too Blurry</div>
+          </div>
+          <div className="guideline-label">Out of focus or dark</div>
+        </div>
+        <div className="guideline-item">
+          <div className="guideline-img-wrap">
+            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=400&sat=-100" alt="Accessories" />
+            <div className="guideline-badge badge-no">Incorrect</div>
+          </div>
+          <div className="guideline-label">Glasses, hats or busy bg</div>
+        </div>
+      </div>
+    </div>
+
     <div className="check-list">
       <label className="check-item">
         <input type="checkbox" name="termsAccepted" checked={form.termsAccepted} onChange={onChange} />
@@ -1288,32 +1287,88 @@ const Step1 = ({ form, goStep, handlePayment }) => (
   </div>
 );
 
-const Step2 = ({ goStep }) => (
-  <div>
-    <div className="step-header">
-      <div className="step-icon icon-blue">🔍</div>
-      <div>
-        <div className="step-title">Document Review</div>
-        <div className="step-subtitle">Our experts are carefully verifying your documents</div>
+const Step2 = ({ appStatus, adminMessage, goStep, onRetry }) => {
+  const isPending = appStatus === "pending";
+  const isApproved = appStatus === "approved";
+  const isRejected = appStatus === "rejected";
+
+  return (
+    <div>
+      <div className="step-header">
+        <div className={`step-icon ${isRejected ? "icon-amber" : "icon-blue"}`}>
+          {isRejected ? "❌" : isApproved ? "✅" : "🔍"}
+        </div>
+        <div>
+          <div className="step-title">
+            {isRejected ? "Action Required" : isApproved ? "Documents Verified" : "Document Review"}
+          </div>
+          <div className="step-subtitle">
+            {isRejected ? "Some issues were found with your submission" : isApproved ? "Your documents have been approved! Please proceed to payment" : "Our experts are carefully verifying your documents"}
+          </div>
+        </div>
+      </div>
+
+      {isPending && (
+        <div className="info-panel blue">
+          <span className="info-icon">⏳</span>
+          <h3>Review in Progress</h3>
+          <p>Your documents are being checked for authenticity &amp; completeness.<br /><strong>Estimated: 24–48 business hours</strong></p>
+        </div>
+      )}
+
+      {isApproved && (
+        <div className="info-panel green">
+          <span className="info-icon">✅</span>
+          <h3>Verification Successful</h3>
+          <p>All documents are clear and verified. You can now proceed to make the payment to start processing.</p>
+        </div>
+      )}
+
+      {isRejected && (
+        <div className="info-panel amber">
+          <span className="info-icon">⚠️</span>
+          <h3>Issue Detected</h3>
+          <div style={{ background: "rgba(255,255,255,0.6)", padding: "12px", borderRadius: "10px", margin: "10px 0", border: "1px solid #fde68a" }}>
+            <p style={{ fontWeight: 700, color: "#92400e", marginBottom: 4 }}>Message from Admin:</p>
+            <p style={{ color: "#b45309", fontSize: "14px" }}>{adminMessage || "Please check your documents and retry."}</p>
+          </div>
+          <p>Please click retry to go back to the form and fix the issues.</p>
+        </div>
+      )}
+
+      <div className="timeline">
+        <TlItem icon="✅" bg="#dcfce7" title="Documents Submitted" desc="All documents received." badge="bdone" />
+        <TlItem
+          icon={isApproved ? "✅" : "🔍"}
+          bg={isApproved ? "#dcfce7" : isRejected ? "#fee2e2" : "#dbeafe"}
+          title="Document Review"
+          desc={isRejected ? "Issues found by admin." : isApproved ? "Verification cleared!" : "Experts checking authenticity."}
+          badge={isApproved ? "bdone" : isRejected ? "bwait" : "bprog"}
+        />
+        <TlItem icon="💳" bg="#f1f5f9" title="Secure Payment" desc="Proceed to payment after review." badge="bwait" />
+        <TlItem icon="🏛️" bg="#f1f5f9" title="University Verification" desc="Sent to university after payment." badge="bwait" last />
+      </div>
+
+      <div className="actions">
+        {isRejected && (
+          <button className="btn-primary" onClick={onRetry}>
+            🔄 &nbsp;Retry Submission
+          </button>
+        )}
+        {isApproved && (
+          <button className="btn-primary green" onClick={() => goStep(2)}>
+            💳 &nbsp;Proceed to Payment
+          </button>
+        )}
+        {isPending && (
+          <button className="btn-secondary" disabled style={{ opacity: 0.6, cursor: "not-allowed" }}>
+            ⏳ &nbsp;Waiting for Admin...
+          </button>
+        )}
       </div>
     </div>
-    <div className="info-panel blue">
-      <span className="info-icon">⏳</span>
-      <h3>Review in Progress</h3>
-      <p>Your documents are being checked for authenticity &amp; completeness.<br /><strong>Estimated: 24–48 business hours</strong></p>
-    </div>
-    <div className="timeline">
-      <TlItem icon="✅" bg="#dcfce7" title="Documents Submitted" desc="All documents received." badge="bdone" />
-      <TlItem icon="✅" bg="#dcfce7" title="Payment Confirmed" desc="₹1,500 received. Thank you!" badge="bdone" />
-      <TlItem icon="🔍" bg="#dbeafe" title="Document Review — Active" desc="Experts checking authenticity &amp; completeness." badge="bprog" />
-      <TlItem icon="🏛️" bg="#f1f5f9" title="University Verification" desc="Sent to university after review clears." badge="bwait" last />
-    </div>
-    <div className="actions">
-      <button className="btn-secondary" onClick={() => goStep(1)}>← Back</button>
-      <button className="btn-primary" onClick={() => goStep(3)}>Continue &nbsp;→</button>
-    </div>
-  </div>
-);
+  );
+};
 
 const Step3 = ({ goStep }) => (
   <div>
@@ -1380,6 +1435,10 @@ export default function Apply() {
   const [trackId, setTrackId] = useState("");
   const [animKey, setAnimKey] = useState(0);
 
+  const [applicationId, setApplicationId] = useState(() => localStorage.getItem("applicationId") || null);
+  const [appStatus, setAppStatus] = useState("pending");
+  const [adminMessage, setAdminMessage] = useState("");
+
   const [form, setForm] = useState({
     fullName: "", altPhone: "", email: "", phone: "",
     requirement: "", referenceNumber: "",
@@ -1401,6 +1460,62 @@ export default function Apply() {
       document.head.appendChild(s);
     }
   }, []);
+
+  // 🔄 Restore state on refresh
+  useEffect(() => {
+    const restoreState = async () => {
+      const storedId = localStorage.getItem("applicationId");
+      if (storedId) {
+        try {
+          const res = await fetch(`http://192.168.1.43:8000/api/application/${storedId}/status/`);
+          const data = await res.json();
+          if (data.status) {
+            setAppStatus(data.status);
+            setAdminMessage(data.admin_message || "");
+
+            // Map status to step
+            if (data.status === "approved") {
+              if (data.payment_status === "Paid") goStep(3);
+              else goStep(2);
+            } else if (data.status === "pending") {
+              goStep(1);
+            } else if (data.status === "rejected") {
+              goStep(0); // Go to form to show rejection message
+            }
+          }
+        } catch (err) {
+          console.error("Restore state error:", err);
+        }
+      }
+    };
+    restoreState();
+  }, []);
+
+  // ✅ Dynamic API Base
+  const API_BASE = `http://${window.location.hostname}:8000`;
+
+  // 🔄 Status Polling while in Waiting Screen (activeStep 1)
+  useEffect(() => {
+    let interval;
+    if (activeStep === 1 && applicationId) {
+      const checkStatus = async () => {
+        try {
+          const res = await fetch(`${API_BASE}/api/application/${applicationId}/status/`);
+          const data = await res.json();
+          if (data.status) {
+            setAppStatus(data.status);
+            setAdminMessage(data.admin_message || "");
+          }
+        } catch (err) {
+          console.error("Polling error:", err);
+        }
+      };
+
+      checkStatus(); // Initial check
+      interval = setInterval(checkStatus, 5000); // Check every 5 seconds
+    }
+    return () => clearInterval(interval);
+  }, [activeStep, applicationId]);
 
   const goStep = useCallback((n) => {
     setActiveStep(n);
@@ -1468,62 +1583,65 @@ export default function Apply() {
   };
 
   const onSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!form.fullName || !form.email || !form.phone || !form.altPhone || !form.requirement || !form.termsAccepted) {
-    alert("Please fill all required fields (*) and accept Terms");
-    return;
-  }
-
-  const trackingId = "TRK" + Date.now().toString().slice(-6);
-
-  try {
-    const formData = new FormData();   // ✅ IMPORTANT
-
-    // ✅ Append form fields
-    Object.keys(form).forEach(key => {
-      formData.append(key, form[key]);
-    });
-
-    // ✅ Append trackingId (optional if backend uses it)
-    formData.append("trackingId", trackingId);
-
-    // ✅ Append degrees (VERY IMPORTANT)
-    formData.append("degrees", JSON.stringify(degrees));
-
-    // ✅ Append files
-    Object.keys(upCompressed).forEach(type => {
-      const fileData = upCompressed[type];
-      if (fileData?.file) {
-        formData.append(type, fileData.file);
-      }
-    });
-
-    // ✅ API call
-    const res = await fetch("http://127.0.0.1:8000/api/submit/", {
-      method: "POST",
-      body: formData,   // ✅ now defined
-    });
-
-    const data = await res.json();
-
-    if (res.ok) {
-      alert(`Application Submitted ✅\nTracking ID: ${trackingId}`);
-      localStorage.setItem("trackingId", trackingId);
-      goStep(1);
-    } else {
-      alert(data.error || "Submission failed");
+    if (!form.fullName || !form.email || !form.phone || !form.altPhone || !form.requirement || !form.termsAccepted) {
+      alert("Please fill all required fields (*) and accept Terms");
+      return;
     }
 
-  } catch (err) {
-    console.error("❌ FRONTEND ERROR:", err);
-    alert("Something went wrong");
-  }
-};
+    const trackingId = "TRK" + Date.now().toString().slice(-6);
+
+    try {
+      const formData = new FormData();   // ✅ IMPORTANT
+
+      // ✅ Append form fields
+      Object.keys(form).forEach(key => {
+        formData.append(key, form[key]);
+      });
+
+      // ✅ Append trackingId (optional if backend uses it)
+      formData.append("trackingId", trackingId);
+
+      // ✅ Append degrees (VERY IMPORTANT)
+      formData.append("degrees", JSON.stringify(degrees));
+
+      // ✅ Append files
+      Object.keys(upCompressed).forEach(type => {
+        const fileData = upCompressed[type];
+        if (fileData?.file) {
+          formData.append(type, fileData.file);
+        }
+      });
+
+      // ✅ API call
+      const res = await fetch("http://192.168.1.43:8000/api/submit/", {
+        method: "POST",
+        body: formData,   // ✅ now defined
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        alert(`Application Submitted ✅\nAdmin will now verify your documents.`);
+        setApplicationId(data.application_id);
+        setAppStatus("pending");
+        setAdminMessage(""); // ✅ Clear old message on re-submit
+        localStorage.setItem("applicationId", data.application_id);
+        goStep(1); // Go to Waiting Screen
+      } else {
+        alert(data.error || "Submission failed");
+      }
+
+    } catch (err) {
+      console.error("❌ FRONTEND ERROR:", err);
+      alert("Something went wrong");
+    }
+  };
 
   const handlePayment = async () => {
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/create-order/", {
+      const res = await fetch("http://192.168.1.43:8000/api/create-order/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ amount: 1500 }),
@@ -1537,13 +1655,16 @@ export default function Apply() {
         name: "Your Company",
         description: "Document Verification Fee",
         handler: async function (response) {
-          const verifyRes = await fetch("http://127.0.0.1:8000/api/verifys/", {
+          const verifyRes = await fetch("http://192.168.1.43:8000/api/verifys/", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(response),
           });
           const verifyData = await verifyRes.json();
-          if (verifyData.status === "success") { alert("Payment Successful ✅"); goStep(2); }
+          if (verifyData.status === "success") {
+            alert("Payment Successful ✅");
+            goStep(3); // Go to Processing/University
+          }
           else alert("Payment Failed ❌");
         },
         prefill: { name: form.fullName, email: form.email, contact: form.phone },
@@ -1563,10 +1684,14 @@ export default function Apply() {
     setUpProg({ cmm: 0, degree: 0, internship: 0 });
     setUpNames({ cmm: null, degree: null, internship: null });
     setUpCompressed({ cmm: null, degree: null, internship: null });
+    setApplicationId(null);
+    setAppStatus("pending");
+    setAdminMessage("");
+    localStorage.removeItem("applicationId");
     goStep(0);
   };
 
-  const fillPct = Math.round((activeStep / (PROC.length - 1)) * 100);
+  const fillPct = Math.round(((activeStep + 1) / (PROC.length - 1)) * 100);
 
   return (
     <>
@@ -1588,16 +1713,21 @@ export default function Apply() {
             {/* Process ribbon */}
             <div className="process-section">
               <div className="flow-track">
-                <div className="flow-fill" style={{ width: `${fillPct}%` }} />
+                <div className="flow-fill" style={{ width: `${Math.min(fillPct, 100)}%` }} />
               </div>
               <div className="proc-ribbon">
-                {PROC.map((p, i) => (
-                  <div key={i} className={`proc-cell ${i < activeStep ? "pc-done" : ""} ${i === activeStep ? "pc-active" : ""}`}>
-                    <div className="proc-orb">{p.icon}</div>
-                    <div className="proc-name">{p.label}</div>
-                    <div className="proc-hint">{p.hint}</div>
-                  </div>
-                ))}
+                {PROC.map((p, i) => {
+                  const stepIndex = activeStep + 1;
+                  const isDone = i < stepIndex;
+                  const isActive = i === stepIndex;
+                  return (
+                    <div key={i} className={`proc-cell ${isDone ? "pc-done" : ""} ${isActive ? "pc-active" : ""}`}>
+                      <div className="proc-orb">{p.icon}</div>
+                      <div className="proc-name">{p.label}</div>
+                      <div className="proc-hint">{p.hint}</div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
@@ -1611,11 +1741,25 @@ export default function Apply() {
                   onFile={onFile} delFile={delFile}
                   onDigiLocker={openDigiLocker}
                   onSubmit={onSubmit}
+                  adminMessage={adminMessage}
                 />
               )}
-              {activeStep === 1 && <Step1 form={form} goStep={goStep} handlePayment={handlePayment} />}
-              {activeStep === 2 && <Step2 goStep={goStep} />}
-              {activeStep === 3 && <Step3 goStep={goStep} />}
+              {activeStep === 1 && (
+                <Step2
+                  appStatus={appStatus}
+                  adminMessage={adminMessage}
+                  goStep={goStep}
+                  onRetry={() => goStep(0)}
+                />
+              )}
+              {activeStep === 2 && (
+                <Step1
+                  form={form}
+                  goStep={() => goStep(1)}
+                  handlePayment={handlePayment}
+                />
+              )}
+              {activeStep === 3 && <Step3 goStep={() => goStep(2)} />}
               {activeStep === 4 && <Step4 form={form} reset={reset} />}
             </div>
 
@@ -1624,12 +1768,12 @@ export default function Apply() {
               <h2 style={{ fontSize: 24, fontWeight: 900, color: '#0f172a' }}>Already Applied? <em>Check Status</em></h2>
               <p>Enter your unique tracking ID to see your processing progress</p>
             </div>
-            
+
             <form className="track-bar" onSubmit={handleTrack} style={{ marginTop: 20 }}>
-              <input 
-                type="text" 
-                className="track-input" 
-                placeholder="Enter Tracking ID (e.g. TRK123456)" 
+              <input
+                type="text"
+                className="track-input"
+                placeholder="Enter Tracking ID (e.g. TRK123456)"
                 value={trackId}
                 onChange={(e) => setTrackId(e.target.value)}
               />
