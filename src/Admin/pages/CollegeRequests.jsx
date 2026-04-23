@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from "react";
 // Added Search to the imports below
 import { School, MapPin, Mail, Edit, Plus, X, Save, Search } from 'lucide-react';
 
@@ -6,11 +7,27 @@ const CollegeRequest = () => {
   // ✅ 1. Added the search state (This fixes the error)
   const [search, setSearch] = useState("");
 
-  // State for List of Colleges
-  const [colleges, setColleges] = useState([
-    { id: 1, name: "Hyderabad Institute of Tech", location: "Hyderabad", email: "contact@hit.edu", memoPrice: 500, tcsPrice: 1200, paySlipPrice: 300 },
-    { id: 2, name: "Global Engineering College", location: "Bangalore", email: "info@globaleng.com", memoPrice: 450, tcsPrice: 1100, paySlipPrice: 250 },
-  ]);
+  const [colleges, setColleges] = useState([]);
+
+useEffect(() => {
+  fetchColleges();
+}, []);
+
+const fetchColleges = async () => {
+  try {
+    const res = await fetch("http://192.168.1.5:8000/api/colleges/");
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch");
+    }
+
+    const data = await res.json();
+    setColleges(data);
+
+  } catch (err) {
+    console.error("Error fetching colleges:", err);
+  }
+};
 
   // UI States
   const [isModalOpen, setIsModalOpen] = useState(false); 
@@ -33,18 +50,40 @@ const CollegeRequest = () => {
   };
 
   // Add new college
-  const handleAddCollege = (e) => {
+   // ✅ ADD COLLEGE (POST)
+  const handleAddCollege = async (e) => {
     e.preventDefault();
-    const newCollege = {
-      id: Date.now(),
-      ...formData,
-      memoPrice: 0,
-      tcsPrice: 0,
-      paySlipPrice: 0
-    };
-    setColleges([...colleges, newCollege]);
-    setIsModalOpen(false);
-    setFormData({ name: '', location: '', email: '', district: '', pincode: '', regType: 'Private' });
+
+    try {
+      const res = await fetch(
+        "http://192.168.1.5:8000/api/add_college/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setColleges([...colleges, data]);
+        setIsModalOpen(false);
+        setFormData({
+          name: "",
+          location: "",
+          email: "",
+          district: "",
+          pincode: "",
+          regType: "Private",
+        });
+      } else {
+        alert("Failed to add college");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Server error");
+    }
   };
 
   return (

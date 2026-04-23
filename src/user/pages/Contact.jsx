@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { FiMail, FiPhone, FiMapPin, FiMessageSquare, FiSend } from "react-icons/fi";
 
@@ -7,7 +7,55 @@ const fadeUp = {
   visible: { opacity: 1, y: 0 },
 };
 
-export default function Contact() {
+  export default function Contact() {
+
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    subject: "Transcript Inquiry",
+    message: ""
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+ const [loading, setLoading] = useState(false);
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  console.log("SUBMIT WORKING");
+
+  setLoading(true);
+
+  try {
+    const res = await fetch("http://192.168.1.5:8000/api/contact/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      alert("Message sent successfully!");
+      setFormData({
+        name: "",
+        email: "",
+        subject: "Transcript Inquiry",
+        message: ""
+      });
+    } else {
+      alert(data.error || "Failed to send message");
+    }
+  } catch (err) {
+    console.log(err);
+    alert("Server error");
+  } finally {
+    setLoading(false);
+  }
+};
   return (
     <div className="bg-[#f8fafc] min-h-screen pt-28">
 
@@ -102,13 +150,16 @@ export default function Contact() {
               <p className="text-slate-500 font-bold text-sm md:text-base">We're excited to hear from you!</p>
             </div>
 
-            <form className="space-y-5 md:space-y-6">
+           <form className="space-y-5 md:space-y-6" onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
                 <div className="space-y-1 md:space-y-2">
                   <label className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Full Name</label>
                   <input
                     type="text"
-                    placeholder="John Doe"
+  name="name"
+  value={formData.name}
+  onChange={handleChange}
+  placeholder="John Doe"
                     className="w-full p-3.5 md:p-4 rounded-xl md:rounded-2xl bg-slate-50 border-2 border-slate-50 focus:border-[#2f4a6d] focus:bg-white outline-none font-bold transition-all text-sm md:text-base"
                   />
                 </div>
@@ -116,7 +167,10 @@ export default function Contact() {
                   <label className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Email Address</label>
                   <input
                     type="email"
-                    placeholder="john@example.com"
+  name="email"
+  value={formData.email}
+  onChange={handleChange}
+  placeholder="john@example.com"
                     className="w-full p-3.5 md:p-4 rounded-xl md:rounded-2xl bg-slate-50 border-2 border-slate-50 focus:border-[#2f4a6d] focus:bg-white outline-none font-bold transition-all text-sm md:text-base"
                   />
                 </div>
@@ -124,21 +178,29 @@ export default function Contact() {
 
               <div className="space-y-1 md:space-y-2">
                 <label className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Subject</label>
-                <select className="w-full p-3.5 md:p-4 rounded-xl md:rounded-2xl bg-slate-50 border-2 border-slate-50 focus:border-[#2f4a6d] focus:bg-white outline-none font-bold transition-all appearance-none text-sm md:text-base">
-                  <option>Transcript Inquiry</option>
-                  <option>Document Verification</option>
-                  <option>Partner with Us</option>
-                  <option>Others</option>
-                </select>
+                <select
+  name="subject"
+  value={formData.subject}
+  onChange={handleChange}
+  className="w-full p-3.5 md:p-4 rounded-xl md:rounded-2xl bg-slate-50 border-2 border-slate-50 focus:border-[#2f4a6d] focus:bg-white outline-none font-bold transition-all appearance-none text-sm md:text-base"
+>
+  <option>Transcript Inquiry</option>
+  <option>Document Verification</option>
+  <option>Partner with Us</option>
+  <option>Others</option>
+</select>
               </div>
 
               <div className="space-y-1 md:space-y-2">
                 <label className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Your Message</label>
                 <textarea
-                  rows="4"
-                  placeholder="How can we help you?"
-                  className="w-full p-3.5 md:p-4 rounded-xl md:rounded-2xl bg-slate-50 border-2 border-slate-50 focus:border-[#2f4a6d] focus:bg-white outline-none font-bold transition-all resize-none text-sm md:text-base"
-                ></textarea>
+  name="message"
+  value={formData.message}
+  onChange={handleChange}
+  rows="4"
+  placeholder="How can we help you?"
+  className="w-full p-3.5 md:p-4 rounded-xl md:rounded-2xl bg-slate-50 border-2 border-slate-50 focus:border-[#2f4a6d] focus:bg-white outline-none font-bold transition-all resize-none text-sm md:text-base"
+/>
               </div>
 
               <button className="w-full bg-[#2f4a6d] text-white py-4 md:py-5 rounded-xl md:rounded-2xl font-black text-base md:text-lg hover:bg-slate-900 shadow-xl shadow-blue-900/20 transition-all active:scale-[0.98] flex items-center justify-center gap-3">

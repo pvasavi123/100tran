@@ -1,547 +1,148 @@
-// // import React, { useState } from 'react';
-// // import { Search, Filter, Eye, CheckCircle } from 'lucide-react';
-
-// // const StudentRequests = () => {
-// //   const [search, setSearch] = useState("");
-
-// //   const requests = [
-// //     {
-// //       id: "REQ-001",
-// //       name: "Rahul Sharma",
-// //       email: "rahul@gmail.com",
-// //       university: "JNTU Hyderabad",
-// //       type: "Degree Certificate",
-// //       date: "2026-04-12",
-// //       status: "Pending",
-// //       documents: "Uploaded",
-// //       payment: "Paid",
-// //       assigned: "Manager A",
-// //       delivery: "Email",
-// //       tracking: "TRK12345",
-// //     },
-// //     {
-// //       id: "REQ-002",
-// //       name: "Anjali Priya",
-// //       email: "anjali@gmail.com",
-// //       university: "Osmania University",
-// //       type: "Migration Certificate",
-// //       date: "2026-04-11",
-// //       status: "Verified",
-// //       documents: "Uploaded",
-// //       payment: "Paid",
-// //       assigned: "Manager B",
-// //       delivery: "Courier",
-// //       tracking: "TRK56789",
-// //     },
-// //     {
-// //       id: "REQ-003",
-// //       name: "Suresh Babu",
-// //       email: "suresh@gmail.com",
-// //       university: "Delhi University",
-// //       type: "Transcript",
-// //       date: "2026-04-10",
-// //       status: "Rejected",
-// //       documents: "Missing",
-// //       payment: "Pending",
-// //       assigned: "Manager A",
-// //       delivery: "Email",
-// //       tracking: "TRK99999",
-// //     },
-// //   ];
-
-// //   // 🔍 Search Filter
-// //   const filteredRequests = requests.filter(
-// //     (req) =>
-// //       req.name.toLowerCase().includes(search.toLowerCase()) ||
-// //       req.id.toLowerCase().includes(search.toLowerCase())
-// //   );
-
-// //   return (
-// //     <div className="space-y-6">
-
-// //       {/* 🔵 Header */}
-// //       <div className="flex justify-between items-center">
-// //         <div>
-// //           <h1 className="text-2xl font-bold text-slate-800">Student Requests</h1>
-// //           <p className="text-slate-500">Manage and approve certificate applications</p>
-// //         </div>
-
-// //         <div className="flex gap-3">
-// //           <button className="flex items-center gap-2 px-4 py-2 bg-white border rounded-lg text-slate-600 hover:bg-slate-50">
-// //             <Filter size={18} /> Filter
-// //           </button>
-
-// //           <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-// //             Export CSV
-// //           </button>
-// //         </div>
-// //       </div>
-
-// //       {/* 🟡 Info Section */}
-// //       {/* <div className="bg-white border border-blue-100 rounded-2xl p-6 shadow-sm">
-// //         <h2 className="text-lg font-semibold text-blue-700 mb-2">
-// //           Application Workflow
-// //         </h2>
-
-// //         <p className="text-slate-600 mb-4">
-// //           Students submit certificate requests, upload documents, and complete payments.
-// //           Admin verifies and assigns cases to employees for processing.
-// //         </p>
-
-// //         <div className="grid md:grid-cols-2 gap-3 text-sm text-slate-600">
-// //           <ul>
-// //             <li>✔ Upload Documents</li>
-// //             <li>✔ Document Verification</li>
-// //             <li>✔ Payment Processing</li>
-// //           </ul>
-// //           <ul>
-// //             <li>✔ Case Assignment</li>
-// //             <li>✔ University Processing</li>
-// //             <li>✔ Final Delivery</li>
-// //           </ul>
-// //         </div> */}
-// //       {/* </div> */}
-
-// //       {/* 🔍 Search */}
-// //       <div className="bg-white border rounded-xl p-3 flex items-center gap-2">
-// //         <Search className="text-slate-400" size={20} />
-// //         <input
-// //           type="text"
-// //           placeholder="Search by name or ID..."
-// //           className="w-full outline-none"
-// //           onChange={(e) => setSearch(e.target.value)}
-// //         />
-// //       </div>
-
-// //       {/* 📊 Table */}
-// //       <div className="bg-white rounded-2xl border overflow-x-auto">
-// //         <table className="w-full text-sm">
-          
-// //           <thead className="bg-slate-50 text-slate-500 uppercase text-xs">
-// //             <tr>
-// //               <th className="px-4 py-3">Student</th>
-// //               <th className="px-4 py-3">University</th>
-// //               <th className="px-4 py-3">Request</th>
-// //               <th className="px-4 py-3">Documents</th>
-// //               <th className="px-4 py-3">Payment</th>
-// //               <th className="px-4 py-3">Assigned</th>
-// //               <th className="px-4 py-3">Status</th>
-// //               <th className="px-4 py-3">Tracking</th>
-// //               <th className="px-4 py-3">Delivery</th>
-// //               <th className="px-4 py-3 text-right">Actions</th>
-// //             </tr>
-// //           </thead>
-
-// //           <tbody>
-// //             {filteredRequests.map((req) => (
-// //               <tr key={req.id} className="border-t hover:bg-blue-50/30">
-
-// //                 {/* Student */}
-// //                 <td className="px-4 py-3">
-// //                   <div className="font-medium text-slate-800">{req.name}</div>
-// //                   <div className="text-xs text-slate-400">{req.email}</div>
-// //                 </td>
-
-// //                 {/* University */}
-// //                 <td className="px-4 py-3">{req.university}</td>
-
-// //                 {/* Request */}
-// //                 <td className="px-4 py-3">{req.type}</td>
-
-// //                 {/* Documents */}
-// //                 <td className="px-4 py-3">
-// //                   <span className={`text-xs px-2 py-1 rounded ${
-// //                     req.documents === "Uploaded"
-// //                       ? "bg-blue-100 text-blue-600"
-// //                       : "bg-red-100 text-red-600"
-// //                   }`}>
-// //                     {req.documents}
-// //                   </span>
-// //                 </td>
-
-// //                 {/* Payment */}
-// //                 <td className="px-4 py-3">
-// //                   <span className={`text-xs px-2 py-1 rounded ${
-// //                     req.payment === "Paid"
-// //                       ? "bg-green-100 text-green-600"
-// //                       : "bg-yellow-100 text-yellow-600"
-// //                   }`}>
-// //                     {req.payment}
-// //                   </span>
-// //                 </td>
-
-// //                 {/* Assigned */}
-// //                 <td className="px-4 py-3">
-// //                   <select className="border rounded px-2 py-1 text-sm">
-// //                     <option>{req.assigned}</option>
-// //                     <option>Manager A</option>
-// //                     <option>Manager B</option>
-// //                   </select>
-// //                 </td>
-
-// //                 {/* Status */}
-// //                 <td className="px-4 py-3">
-// //                   <span className={`text-xs px-2 py-1 rounded ${
-// //                     req.status === "Verified"
-// //                       ? "bg-green-100 text-green-600"
-// //                       : req.status === "Pending"
-// //                       ? "bg-yellow-100 text-yellow-600"
-// //                       : "bg-red-100 text-red-600"
-// //                   }`}>
-// //                     {req.status}
-// //                   </span>
-// //                 </td>
-
-// //                 {/* Tracking */}
-// //                 <td className="px-4 py-3 text-xs text-slate-500">
-// //                   {req.tracking}
-// //                 </td>
-
-// //                 {/* Delivery */}
-// //                 <td className="px-4 py-3">{req.delivery}</td>
-
-// //                 {/* Actions */}
-// //                 <td className="px-4 py-3 text-right">
-// //                   <div className="flex justify-end gap-2">
-// //                     <button className="p-2 text-blue-600 hover:bg-blue-100 rounded">
-// //                       <Eye size={16} />
-// //                     </button>
-// //                     <button className="p-2 text-green-600 hover:bg-green-100 rounded">
-// //                       <CheckCircle size={16} />
-// //                     </button>
-// //                   </div>
-// //                 </td>
-
-// //               </tr>
-// //             ))}
-// //           </tbody>
-
-// //         </table>
-// //       </div>
-// //     </div>
-// //   );
-// // };
-
-// // export default StudentRequests;
-
-
-// import React, { useState } from "react";
-// import { Search, Filter, Eye, CheckCircle, Clock, XCircle, Users } from "lucide-react";
-
-// const StudentRequests = () => {
-//   const [search, setSearch] = useState("");
-
-//   const requests = [
-//     {
-//       id: "REQ-001",
-//       name: "Rahul Sharma",
-//       email: "rahul@gmail.com",
-//       university: "JNTU Hyderabad",
-//       type: "Degree Certificate",
-//       date: "2026-04-12",
-//       status: "Pending",
-//       documents: "Uploaded",
-//       payment: "Paid",
-//       assigned: "Manager A",
-//       delivery: "Email",
-//     },
-//     {
-//       id: "REQ-002",
-//       name: "Anjali Priya",
-//       email: "anjali@gmail.com",
-//       university: "Osmania University",
-//       type: "Migration Certificate",
-//       date: "2026-04-11",
-//       status: "Verified",
-//       documents: "Uploaded",
-//       payment: "Paid",
-//       assigned: "Manager B",
-//       delivery: "Courier",
-//     },
-//     {
-//       id: "REQ-003",
-//       name: "Suresh Babu",
-//       email: "suresh@gmail.com",
-//       university: "Delhi University",
-//       type: "Transcript",
-//       date: "2026-04-10",
-//       status: "Rejected",
-//       documents: "Missing",
-//       payment: "Pending",
-//       assigned: "Manager c",
-//       delivery: "Email",
-//     },
-//   ];
-
-//   const total = requests.length;
-//   const pending = requests.filter(r => r.status === "Pending").length;
-//   const verified = requests.filter(r => r.status === "Verified").length;
-//   const rejected = requests.filter(r => r.status === "Rejected").length;
-
-//   const filtered = requests.filter(
-//     r =>
-//       r.name.toLowerCase().includes(search.toLowerCase()) ||
-//       r.id.toLowerCase().includes(search.toLowerCase())
-//   );
-
-//   return (
-//     <div className="p-6 space-y-6 bg-slate-100 min-h-screen">
-
-//       {/* 🔵 Header */}
-//       <div className="flex justify-between items-center">
-//         <div>
-//           <h1 className="text-3xl font-bold text-slate-800">Student Requests</h1>
-//           <p className="text-slate-500">Manage certificates & applications</p>
-//         </div>
-
-//         <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl shadow hover:bg-blue-700 transition">
-//           <Filter size={18}/> Filter
-//         </button>
-//       </div>
-
-//       {/* 📊 Modern Stats */}
-//       <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
-
-//         <div className="p-5 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-400 text-white shadow-lg">
-//           <div className="flex justify-between">
-//             <div>
-//               <p className="text-sm opacity-80">Total</p>
-//               <h2 className="text-3xl font-bold">{total}</h2>
-//             </div>
-//             <Users />
-//           </div>
-//         </div>
-
-//         <div className="p-5 rounded-2xl bg-yellow-100 text-yellow-700 shadow">
-//           <div className="flex justify-between">
-//             <div>
-//               <p className="text-sm">Pending</p>
-//               <h2 className="text-3xl font-bold">{pending}</h2>
-//             </div>
-//             <Clock />
-//           </div>
-//         </div>
-
-//         <div className="p-5 rounded-2xl bg-green-100 text-green-700 shadow">
-//           <div className="flex justify-between">
-//             <div>
-//               <p className="text-sm">Verified</p>
-//               <h2 className="text-3xl font-bold">{verified}</h2>
-//             </div>
-//             <CheckCircle />
-//           </div>
-//         </div>
-
-//         <div className="p-5 rounded-2xl bg-red-100 text-red-700 shadow">
-//           <div className="flex justify-between">
-//             <div>
-//               <p className="text-sm">Rejected</p>
-//               <h2 className="text-3xl font-bold">{rejected}</h2>
-//             </div>
-//             <XCircle />
-//           </div>
-//         </div>
-
-//       </div>
-
-//       {/* 🔍 Search Bar */}
-//       <div className="bg-white p-3 rounded-xl shadow flex items-center gap-3">
-//         <Search className="text-gray-400"/>
-//         <input
-//           type="text"
-//           placeholder="Search by name or ID..."
-//           className="w-full outline-none"
-//           onChange={(e)=>setSearch(e.target.value)}
-//         />
-//       </div>
-
-//       {/* 📊 Table */}
-//       <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-
-//         <table className="w-full text-sm">
-//           <thead className="bg-slate-50 text-slate-500 text-xs uppercase">
-//             <tr>
-//               <th className="p-4">Student</th>
-//               <th>University</th>
-//               <th>Request</th>
-//               <th>Documents</th>
-//               <th>Payment</th>
-//               <th>Status</th>
-//               <th className="text-right pr-6">Actions</th>
-//             </tr>
-//           </thead>
-
-//           <tbody>
-//             {filtered.map((req) => (
-//               <tr key={req.id} className="border-t hover:bg-slate-50 transition">
-
-//                 <td className="p-4">
-//                   <div className="font-semibold">{req.name}</div>
-//                   <div className="text-xs text-gray-400">{req.email}</div>
-//                 </td>
-
-//                 <td>{req.university}</td>
-//                 <td>{req.type}</td>
-
-//                 <td>
-//                   <span className={`px-2 py-1 rounded-full text-xs ${
-//                     req.documents === "Uploaded"
-//                       ? "bg-blue-100 text-blue-600"
-//                       : "bg-red-100 text-red-600"
-//                   }`}>
-//                     {req.documents}
-//                   </span>
-//                 </td>
-
-//                 <td>
-//                   <span className={`px-2 py-1 rounded-full text-xs ${
-//                     req.payment === "Paid"
-//                       ? "bg-green-100 text-green-600"
-//                       : "bg-yellow-100 text-yellow-600"
-//                   }`}>
-//                     {req.payment}
-//                   </span>
-//                 </td>
-
-//                 <td>
-//                   <span className={`px-2 py-1 rounded-full text-xs ${
-//                     req.status === "Verified"
-//                       ? "bg-green-100 text-green-600"
-//                       : req.status === "Pending"
-//                       ? "bg-yellow-100 text-yellow-600"
-//                       : "bg-red-100 text-red-600"
-//                   }`}>
-//                     {req.status}
-//                   </span>
-//                 </td>
-
-//                 <td className="text-right pr-6">
-//                   <button className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg">
-//                     <Eye size={18}/>
-//                   </button>
-//                 </td>
-
-//               </tr>
-//             ))}
-//           </tbody>
-//         </table>
-
-//       </div>
-
-//     </div>
-//   );
-// };
-
-// export default StudentRequests;
-
-
-import React, { useState } from "react";
-import { Search, Filter, Eye, CheckCircle, Clock, XCircle, Users, X, MapPin, Mail, School, FileText, CreditCard, Truck, ExternalLink, FileCheck } from "lucide-react";
+import { 
+  Search, Filter, Eye, CheckCircle, Clock, XCircle, Users, X, 
+  MapPin, Mail, CreditCard, Truck, FileCheck, CheckCircle2, Circle,
+  Send, Copy, Check, AlertCircle 
+} from "lucide-react";
+import React, { useState, useEffect } from "react";
 
 const StudentRequests = () => {
   const [search, setSearch] = useState("");
   const [selectedStudent, setSelectedStudent] = useState(null);
-  
-  // 🔵 Added States for Filter Button
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState("All");
+  const [requests, setRequests] = useState([]);
 
-  const requests = [
-    {
-      id: "REQ-001",
-      name: "Rahul Sharma",
-      email: "rahul@gmail.com",
-      university: "JNTU Hyderabad",
-      type: "Degree Certificate",
-      date: "2026-04-12",
-      status: "Pending",
-      documents: "Uploaded",
-      payment: "Paid",
-      assigned: "Manager A",
-      delivery: "Email",
-      phone: "+91 9876543210",
-      district: "Hyderabad",
-      documentsList: [
-        { name: "10th Marks Memo", status: "Uploaded", url: "#" },
-        { name: "Inter/12th Memo", status: "Uploaded", url: "#" },
-        { name: "Aadhar Card", status: "Uploaded", url: "#" }
-      ]
-    },
-    {
-      id: "REQ-002",
-      name: "Anjali Priya",
-      email: "anjali@gmail.com",
-      university: "Osmania University",
-      type: "Migration Certificate",
-      date: "2026-04-11",
-      status: "Verified",
-      documents: "Uploaded",
-      payment: "Paid",
-      assigned: "Manager B",
-      delivery: "Courier",
-      phone: "+91 8888877777",
-      district: "Rangareddy",
-      documentsList: [
-        { name: "Final Year Memo", status: "Uploaded", url: "#" },
-        { name: "Transfer Certificate", status: "Uploaded", url: "#" }
-      ]
-    },
-    {
-      id: "REQ-003",
-      name: "Suresh Babu",
-      email: "suresh@gmail.com",
-      university: "Delhi University",
-      type: "Transcript",
-      date: "2026-04-10",
-      status: "Rejected",
-      documents: "Missing",
-      payment: "Pending",
-      assigned: "Manager c",
-      delivery: "Email",
-      phone: "+91 9999900000",
-      district: "Central Delhi",
-      documentsList: [
-        { name: "Degree Memo", status: "Missing", url: null }
-      ]
-    },
-  ];
+  // --- NEW: Reply/Message States ---
+  const [replyingTo, setReplyingTo] = useState(null);
+  const [issueType, setIssueType] = useState('Document Issue');
+  const [exactProblem, setExactProblem] = useState('The uploaded ID proof is blurred and unreadable.');
+  const [copied, setCopied] = useState(false);
+  const companyName = "100 Transcripts";
+
+   // ✅ FETCH API
+  const fetchRequests = async () => {
+    try {
+      const res = await fetch("http://127.0.0.1:8000/api/applications/");
+      const data = await res.json();
+      setRequests(data);
+    } catch (err) {
+      console.error("Error fetching requests:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchRequests();
+  }, []);
+const handleSendEmail = async () => {
+  if (!replyingTo) return;
+
+  try {
+    const res = await fetch("http://127.0.0.1:8000/api/send-notification/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: replyingTo.email,
+        subject: `Action Required: ${issueType} for Request ${replyingTo.id}`,
+        message: emailBody,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      alert("✅ Email sent successfully");
+      setReplyingTo(null);
+    } else {
+      alert("❌ " + (data.error || "Failed to send"));
+    }
+  } catch (err) {
+    console.error(err);
+    alert("❌ Server error");
+  }
+};
+
+const updateStatus = async (id, newStatus) => {
+  try {
+    await fetch(`http://127.0.0.1:8000/api/update-status/${id}/`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ status: newStatus }),
+    });
+
+    // ✅ Update UI instantly
+    setRequests(prev =>
+      prev.map(req =>
+        req.id === id ? { ...req, status: newStatus } : req
+      )
+    );
+
+    // ✅ Update modal also
+    setSelectedStudent(prev =>
+      prev ? { ...prev, status: newStatus } : null
+    );
+
+  } catch (err) {
+    console.error(err);
+    alert("Failed to update status");
+  }
+};
 
   const total = requests.length;
   const pending = requests.filter(r => r.status === "Pending").length;
   const verified = requests.filter(r => r.status === "Verified").length;
   const rejected = requests.filter(r => r.status === "Rejected").length;
 
-  // ✅ Search + Filter Button Logic
   const filtered = requests.filter(r => {
     const matchesSearch = r.name.toLowerCase().includes(search.toLowerCase()) || r.id.toLowerCase().includes(search.toLowerCase());
     const matchesStatus = statusFilter === "All" || r.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
-  return (
-    <div className="p-6 space-y-6 bg-slate-100 min-h-screen relative">
+  // --- Email Preview Logic ---
+  const emailBody = replyingTo ? `Dear ${replyingTo.name},
 
-      {/* 🔵 Header */}
+We have reviewed your request, and there is an issue that requires your attention.
+
+Issue Details:
+• Type: ${issueType}
+• Details: ${exactProblem}
+
+What You Need to Do:
+• Please review the issue and take the necessary action.
+• Upload correct documents / complete payment / provide required information.
+
+Best regards,
+${companyName} Support Team` : "";
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(emailBody);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="p-6 space-y-6 bg-slate-100 min-h-screen relative font-sans">
+
+      {/* Header */}
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-slate-800">Student Requests</h1>
           <p className="text-slate-500">Manage certificates & applications</p>
         </div>
-
-        {/* 🔵 Filter Toggle */}
-        <button 
-          onClick={() => setIsFilterModalOpen(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl shadow hover:bg-blue-700 transition"
-        >
+        <button onClick={() => setIsFilterModalOpen(true)} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl shadow hover:bg-blue-700 transition">
           <Filter size={18}/> Filter
         </button>
       </div>
 
-      {/* 📊 Modern Stats */}
+      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
         <div className="p-5 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-400 text-white shadow-lg">
           <div className="flex justify-between">
-            <div><p className="text-sm opacity-80">Total</p><h2 className="text-3xl font-bold text-white">{total}</h2></div>
+            <div><p className="text-sm opacity-80">Total</p><h2 className="text-3xl font-bold">{total}</h2></div>
             <Users />
           </div>
         </div>
@@ -565,76 +166,77 @@ const StudentRequests = () => {
         </div>
       </div>
 
-      {/* 🔍 Search Bar */}
-      <div className="bg-white p-3 rounded-xl shadow flex items-center gap-3">
-        <Search className="text-gray-400"/>
-        <input
-          type="text"
-          placeholder="Search by name or ID..."
-          className="w-full outline-none"
-          onChange={(e)=>setSearch(e.target.value)}
-        />
+      {/* Search Input */}
+      <div className="bg-white p-3 rounded-xl shadow border border-slate-200 flex items-center gap-3">
+        <Search className="text-gray-400" size={20}/>
+        <input type="text" placeholder="Search by name or ID..." className="w-full outline-none text-slate-700" onChange={(e)=>setSearch(e.target.value)} />
       </div>
 
-      {/* 📊 Table */}
-      <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-        <table className="w-full text-sm text-left">
-          <thead className="bg-slate-50 text-slate-500 text-xs uppercase">
-            <tr>
-              <th className="p-4">Student</th>
-              <th>University</th>
-              <th>Request</th>
-              <th>Documents</th>
-              <th>Payment</th>
-              <th>Status</th>
-              <th className="text-right pr-6">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map((req) => (
-              <tr key={req.id} className="border-t hover:bg-slate-50 transition">
-                <td className="p-4">
-                  <div className="font-semibold text-slate-700">{req.name}</div>
-                  <div className="text-xs text-slate-400">{req.email}</div>
-                </td>
-                <td>{req.university}</td>
-                <td>{req.type}</td>
-                <td>
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${req.documents === "Uploaded" ? "bg-blue-100 text-blue-600" : "bg-red-100 text-red-600"}`}>
-                    {req.documents}
-                  </span>
-                </td>
-                <td>
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${req.payment === "Paid" ? "bg-green-100 text-green-600" : "bg-yellow-100 text-yellow-600"}`}>
-                    {req.payment}
-                  </span>
-                </td>
-                <td>
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${req.status === "Verified" ? "bg-green-100 text-green-600" : req.status === "Pending" ? "bg-yellow-100 text-yellow-600" : "bg-red-100 text-red-600"}`}>
-                    {req.status}
-                  </span>
-                </td>
-                <td className="text-right pr-6">
-                  <button onClick={() => setSelectedStudent(req)} className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition">
-                    <Eye size={18}/>
-                  </button>
-                </td>
+      {/* Data Table */}
+      <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-slate-200">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm text-left">
+            <thead className="bg-slate-50 text-slate-500 text-xs uppercase font-bold">
+              <tr>
+                <th className="p-4">Student</th>
+                <th className="p-4">Request ID</th>
+                <th className="p-4">Phone</th>
+                <th className="p-4">University</th>
+                <th className="p-4">Request</th>
+                <th className="p-4">Payment</th>
+                <th className="p-4">Status</th>
+                <th className="p-4 text-right pr-6">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filtered.map((req) => (
+                <tr key={req.id} className="border-t hover:bg-slate-50 transition">
+                  <td className="p-4">
+                    <div className="font-semibold text-slate-700">{req.name}</div>
+                    <div className="text-xs text-blue-500 font-medium">{req.email}</div>
+                  </td>
+                  <td className="p-4 text-slate-600">{req.id}</td>
+                  <td className="p-4 text-slate-600">{req.phone}</td>
+                  <td className="p-4 text-slate-600">{req.university}</td>
+                  <td className="p-4 text-slate-600">{req.type}</td>
+                  <td className="p-4">
+                    <span className={`px-2 py-1 rounded-full text-xs font-bold ${req.payment === "Paid" ? "bg-green-100 text-green-600" : "bg-yellow-100 text-yellow-600"}`}>
+                      {req.payment}
+                    </span>
+                  </td>
+                  <td className="p-4">
+                    <span className={`px-2 py-1 rounded-full text-xs font-bold ${req.status === "Verified" ? "bg-green-100 text-green-600" : req.status === "Pending" ? "bg-yellow-100 text-yellow-600" : "bg-red-100 text-red-600"}`}>
+                      {req.status}
+                    </span>
+                  </td>
+                  <td className="p-4 text-right pr-6 space-x-2">
+                    {/* UPDATED: Reply button now opens the message modal */}
+                    <button 
+                      onClick={() => setReplyingTo(req)} 
+                      className="px-3 py-1 bg-blue-600 text-white rounded-lg text-xs font-bold hover:bg-blue-700 transition"
+                    >
+                      Reply
+                    </button>
+                    <button onClick={() => setSelectedStudent(req)} className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition inline-flex align-middle">
+                      <Eye size={18}/>
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      {/* 🔵 FILTER POPUP MODAL */}
+      {/* --- FILTER POPUP MODAL --- */}
       {isFilterModalOpen && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[60] p-4">
-          <div className="bg-white rounded-3xl w-full max-w-sm shadow-2xl overflow-hidden">
+          <div className="bg-white rounded-3xl w-full max-w-sm shadow-2xl overflow-hidden border border-white/20">
             <div className="p-6 space-y-4">
               <div className="flex justify-between items-center border-b pb-3">
                 <h2 className="text-xl font-bold text-slate-800">Filter Requests</h2>
-                <button onClick={() => setIsFilterModalOpen(false)} className="hover:bg-slate-100 p-1 rounded-full"><X size={20} /></button>
+                <button onClick={() => setIsFilterModalOpen(false)} className="hover:bg-slate-100 p-1 rounded-full transition"><X size={20} /></button>
               </div>
-              
               <div className="space-y-3">
                 <p className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Status</p>
                 <div className="grid grid-cols-2 gap-2">
@@ -642,71 +244,201 @@ const StudentRequests = () => {
                     <button
                       key={status}
                       onClick={() => setStatusFilter(status)}
-                      className={`px-4 py-2 rounded-xl text-sm font-semibold transition ${
-                        statusFilter === status ? "bg-blue-600 text-white shadow-md" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                      }`}
+                      className={`px-4 py-2 rounded-xl text-sm font-semibold transition ${statusFilter === status ? "bg-blue-600 text-white shadow-md" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}
                     >
                       {status}
                     </button>
                   ))}
                 </div>
               </div>
-
-              <button 
-                onClick={() => setIsFilterModalOpen(false)}
-                className="w-full bg-slate-900 text-white py-3 rounded-xl font-bold mt-4 hover:bg-slate-800 transition"
-              >
-                Apply Filters
-              </button>
+              <button onClick={() => setIsFilterModalOpen(false)} className="w-full bg-slate-900 text-white py-3 rounded-xl font-bold mt-4">Apply Filters</button>
             </div>
           </div>
         </div>
       )}
 
-      {/* 🔵 STUDENT INFORMATION MODAL (POPUP) */}
-      {selectedStudent && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden">
-            <div className="bg-blue-600 p-6 text-white flex justify-between items-center">
-              <h2 className="text-xl font-bold">Request Detail View</h2>
-              <button onClick={() => setSelectedStudent(null)} className="hover:bg-white/20 p-1 rounded-full"><X size={24} /></button>
-            </div>
-
-            <div className="max-h-[75vh] overflow-y-auto p-8 space-y-8">
-              <div className="flex items-center gap-4 border-b pb-6">
-                <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-2xl font-bold">
-                  {selectedStudent.name.charAt(0)}
+      {/* --- NEW: REPLY / ISSUE MESSAGE MODAL --- */}
+      {replyingTo && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
+          <div className="bg-white rounded-3xl w-full max-w-4xl shadow-2xl overflow-hidden flex flex-col md:flex-row max-h-[90vh]">
+            <div className="flex-1 p-8 space-y-6 overflow-y-auto border-r border-slate-100">
+              <div className="flex justify-between items-center">
+                <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-2"><Mail className="text-blue-600" /> Issue Notification</h2>
+                <button onClick={() => setReplyingTo(null)} className="p-2 hover:bg-slate-100 rounded-full transition"><X size={24}/></button>
+              </div>
+              <div className="space-y-4">
+                <div>
+                  <label className="text-xs font-bold text-slate-500 uppercase ml-1">Recipient</label>
+                  <div className="p-3 bg-slate-50 border rounded-xl font-bold text-slate-700 mt-1">{replyingTo.name} ({replyingTo.email})</div>
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-slate-800">{selectedStudent.name}</h3>
-                  <div className="flex gap-4 text-xs text-slate-500 mt-1 font-medium">
-                    <span className="flex items-center gap-1"><Mail size={12}/> {selectedStudent.email}</span>
-                    <span className="flex items-center gap-1"><MapPin size={12}/> {selectedStudent.district}</span>
+                  <label className="text-xs font-bold text-slate-500 uppercase ml-1">Issue Category</label>
+                  <select className="w-full border rounded-xl p-3 mt-1 outline-none focus:ring-2 focus:ring-blue-500 bg-white" value={issueType} onChange={(e) => setIssueType(e.target.value)}>
+                    <option>Document Issue</option>
+                    <option>Payment Issue</option>
+                    <option>Missing Information</option>
+                    <option>Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-slate-500 uppercase ml-1">Exact Problem Description</label>
+                  <textarea rows="4" className="w-full border rounded-xl p-3 mt-1 outline-none focus:ring-2 focus:ring-blue-500" value={exactProblem} onChange={(e) => setExactProblem(e.target.value)} />
+                </div>
+              </div>
+            </div>
+            <div className="w-full md:w-[350px] bg-slate-50 p-8 flex flex-col">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="font-bold text-slate-700">Preview</h3>
+                <button onClick={handleCopy} className={`flex items-center gap-1 text-xs px-3 py-1 rounded-lg transition ${copied ? 'bg-green-600 text-white' : 'bg-white border text-slate-600 hover:bg-slate-100'}`}>
+                  {copied ? <Check size={14}/> : <Copy size={14}/>} {copied ? 'Copied' : 'Copy'}
+                </button>
+              </div>
+              <div className="bg-white p-4 rounded-xl border border-slate-200 text-sm text-slate-600 whitespace-pre-wrap flex-1 italic overflow-y-auto">
+                {emailBody}
+              </div>
+              <button onClick={handleSendEmail} className="w-full mt-6 bg-blue-600 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-blue-700 shadow-xl transition">
+                <Send size={18} /> Send Notification
+              </button>
+              <div className="mt-4 p-3 bg-amber-50 rounded-xl flex gap-2 border border-amber-100">
+                <AlertCircle className="text-amber-500 shrink-0" size={16} />
+                <p className="text-[10px] text-amber-800 leading-tight">Notification will open in your mail app.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Student Detail Modal */}
+      {selectedStudent && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-3xl w-full max-w-4xl shadow-2xl overflow-hidden flex flex-col md:row max-h-[90vh]">
+            <div className="flex flex-col md:flex-row w-full h-full overflow-hidden">
+              
+              {/* Left Column: Details */}
+              <div className="flex-1 overflow-y-auto p-8 space-y-8 border-r border-slate-100">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-xl font-bold text-slate-800">Request Detail View</h2>
+                  <button onClick={() => setSelectedStudent(null)} className="md:hidden p-1 rounded-full hover:bg-slate-100"><X size={24} /></button>
+                </div>
+
+                {/* Profile Section */}
+                <div className="flex flex-col md:flex-row justify-between items-start gap-6 border-b pb-6">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-2xl font-bold">
+                      {selectedStudent.name.charAt(0)}
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-slate-800">{selectedStudent.name}</h3>
+                      <div className="flex flex-col gap-1 text-xs text-slate-500 mt-1 font-medium">
+                        <span className="flex items-center gap-1"><Mail size={12}/> {selectedStudent.email}</span>
+                        <span className="flex items-center gap-1"><MapPin size={12}/> {selectedStudent.district}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className={`p-4 rounded-2xl border flex items-center gap-3 min-w-[180px] ${
+                    selectedStudent.payment === "Paid" ? "bg-green-50 border-green-100" : "bg-yellow-50 border-yellow-100"
+                  }`}>
+                    <div className={`p-2 rounded-xl ${selectedStudent.payment === "Paid" ? "bg-green-500 text-white" : "bg-yellow-500 text-white"}`}>
+                      <CreditCard size={20} />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Payment</p>
+                      <p className={`text-sm font-bold ${selectedStudent.payment === "Paid" ? "text-green-700" : "text-yellow-700"}`}>
+                        {selectedStudent.payment}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="space-y-4">
-                <h4 className="text-sm font-bold text-slate-800 flex items-center gap-2 border-l-4 border-blue-600 pl-2">Uploaded Memos</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {selectedStudent.documentsList?.map((doc, index) => (
-                    <div key={index} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-200">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 bg-white rounded-xl text-blue-600 border border-slate-100"><FileCheck size={18} /></div>
-                        <div>
-                          <p className="text-xs font-bold text-slate-700">{doc.name}</p>
-                          <p className="text-[10px] font-bold uppercase text-green-600">{doc.status}</p>
+                {/* Documents List */}
+                <div className="space-y-4">
+                  <h4 className="text-sm font-bold text-slate-800 flex items-center gap-2 border-l-4 border-blue-600 pl-2">Uploaded Documents</h4>
+                  <div className="grid grid-cols-1 gap-3">
+                    {selectedStudent.documentsList?.map((doc, index) => (
+                      <div key={index} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-200 hover:border-blue-300 transition-all">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 bg-white rounded-xl text-blue-600 border border-slate-100"><FileCheck size={18} /></div>
+                          <div>
+                            <p className="text-xs font-bold text-slate-700">{doc.name}</p>
+                            <p className="text-[10px] font-bold uppercase text-green-600">{doc.status}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button onClick={() => alert("Opening preview...")} className="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-xs font-bold hover:bg-blue-600 hover:text-white transition">View</button>
+                          <button onClick={() => window.open(doc.url, '_blank')} className="px-3 py-1.5 bg-[#0b2a4a] text-white rounded-lg text-xs font-bold hover:bg-blue-800 transition shadow-sm">Download</button>
                         </div>
                       </div>
-                      <button className="text-blue-600 hover:text-blue-800 p-2 bg-blue-50 rounded-xl transition" onClick={() => window.open(doc.url, '_blank')}><ExternalLink size={16} /></button>
-                    </div>
-                  )) || <p className="text-slate-400 text-xs italic">No documents detailed in list.</p>}
+                    ))}
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="pt-6 flex gap-4 border-t border-slate-100">
+                  {/* ✅ APPROVE BUTTON */}
+  <button
+    onClick={() => updateStatus(selectedStudent.id, "Verified")}
+    disabled={selectedStudent.status === "Verified"}
+    className={`flex-1 py-3 rounded-2xl font-bold flex items-center justify-center gap-2 shadow-lg transition 
+      ${selectedStudent.status === "Verified"
+        ? "bg-green-200 text-green-800 cursor-not-allowed"
+        : "bg-green-600 text-white hover:bg-green-700 shadow-green-100"}
+    `}
+  >
+    <CheckCircle size={18}/>
+    {selectedStudent.status === "Verified" ? "Approved ✅" : "Approve"}
+  </button>
+
+  {/* ✅ REJECT BUTTON */}
+  <button
+    onClick={() => updateStatus(selectedStudent.id, "Rejected")}
+    className="flex-1 bg-red-50 text-red-600 py-3 rounded-2xl font-bold hover:bg-red-100 transition border border-red-100 flex items-center justify-center gap-2"
+  >
+    <XCircle size={18}/> Reject
+  </button>
                 </div>
               </div>
 
-              <div className="pt-6 flex gap-4">
-                <button className="flex-1 bg-green-600 text-white py-3 rounded-2xl font-bold hover:bg-green-700 transition">Approve</button>
-                <button className="flex-1 bg-red-50 text-red-600 py-3 rounded-2xl font-bold hover:bg-red-100 transition border border-red-100">Reject</button>
+              {/* Right Column: Tracking */}
+              <div className="w-full md:w-[350px] bg-slate-50 p-8 overflow-y-auto">
+                <div className="flex justify-between items-center mb-8">
+                  <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+                    <Truck className="text-blue-600" /> Tracking Detail
+                  </h3>
+                  <button onClick={() => setSelectedStudent(null)} className="hidden md:block p-1 rounded-full hover:bg-slate-200 transition"><X size={20} /></button>
+                </div>
+
+                <div className="relative space-y-8">
+                  <div className="absolute left-[11px] top-2 bottom-2 w-0.5 bg-slate-200"></div>
+                  {selectedStudent.trackingHistory?.map((item, index) => (
+                    <div key={index} className="relative pl-10">
+                      <div className={`absolute left-0 top-0 w-6 h-6 rounded-full flex items-center justify-center z-10 border-2 ${ 
+                        item.status === 'completed' ? 'bg-green-500 border-green-500 text-white' : 
+                        item.status === 'failed' ? 'bg-red-500 border-red-500 text-white' : 
+                        item.status === 'current' ? 'bg-white border-blue-500 text-blue-500' : 
+                        'bg-white border-slate-300 text-slate-300' 
+                      }`}>
+                        {item.status === 'completed' ? <CheckCircle2 size={12} /> : 
+                         item.status === 'failed' ? <X size={10} /> : 
+                         <Circle size={10} fill="currentColor" />}
+                      </div>
+                      <div className="flex flex-col">
+                        <span className={`text-sm font-bold ${item.status === 'upcoming' ? 'text-slate-400' : 'text-slate-700'}`}>
+                          {item.step}
+                        </span>
+                        <span className="text-[11px] font-medium text-slate-400 italic">
+                          {item.time}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-12 bg-blue-600/5 p-4 rounded-2xl border border-blue-200">
+                  <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest mb-1">Assigned Agent</p>
+                  <p className="text-sm font-bold text-slate-700">{selectedStudent.assigned}</p>
+                  <p className="text-xs text-slate-500 mt-1">Delivery via: {selectedStudent.delivery}</p>
+                </div>
               </div>
             </div>
           </div>

@@ -1,45 +1,49 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { FiChevronDown, FiMenu, FiX } from "react-icons/fi";
-
+ 
 const Navbar = () => {
   const [servicesDropdown, setServicesDropdown] = useState(false);
   const [collegesDropdown, setCollegesDropdown] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const [mobileCollegesOpen, setMobileCollegesOpen] = useState(false);
-
+ 
   const navLinks = [
     { name: "HOME", path: "/" },
     { name: "ABOUT", path: "/about" },
     { name: "APPLY", path: "/apply" },
     { name: "CONTACT US", path: "/contact" },
   ];
-
-  const partneredColleges = [
-    {
-      name: "Bhaskar Pharmacy College",
-      path: "/partnered-colleges/bhaskar-pharmacy-college",
-    },
-    {
-      name: "Joginpally B.R Pharmacy College",
-      path: "/partnered-colleges/joginpally-br-pharmacy-college",
-    },
-  ];
-
+ 
+const partneredColleges = [
+  {
+    name: "Bhaskar Pharmacy College",
+    path: "/partnered-colleges/bhaskar-pharmacy-college",
+  },
+  {
+    name: "Joginpally B.R Pharmacy College",
+    path: "/partnered-colleges/joginpally-br-pharmacy-college",
+  },
+  {
+    name: "Siddhartha Institute of Technology & Sciences",
+    path: "/partnered-colleges/siddhartha-institute-of-technology-sciences",
+  },
+];
+ 
   const servicesLinks = [
     { name: "Credential Evaluation", path: "/services/credential" },
     { name: "Certificates", path: "/services/certificates" },
     { name: "Verification", path: "/services/verification" },
   ];
-
+ 
   const desktopDropdownWrapper =
     "absolute left-0 top-full pt-3";
   const desktopDropdown =
     "w-80 overflow-hidden rounded-xl border border-slate-700 bg-[#1f2f44] py-2 text-white shadow-2xl";
   const desktopDropdownItem =
     "block px-6 py-4 font-semibold transition-colors hover:bg-white/10 hover:text-blue-300";
-
+ 
   return (
     <nav className="fixed z-[100] w-full bg-[#2f4a6d] text-white shadow-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:px-8 md:py-5">
@@ -51,7 +55,7 @@ const Navbar = () => {
             <span className="text-[#3b82f6]">100</span> Transcripts
           </Link>
         </div>
-
+ 
         <div className="hidden flex-1 justify-center lg:flex">
           <ul className="flex items-center gap-8 whitespace-nowrap text-sm font-semibold xl:gap-12 xl:text-base">
             <li>
@@ -62,7 +66,7 @@ const Navbar = () => {
                 HOME
               </Link>
             </li>
-
+ 
             <li>
               <Link
                 to="/about"
@@ -71,7 +75,7 @@ const Navbar = () => {
                 ABOUT
               </Link>
             </li>
-
+ 
             <li
               className="relative"
               onMouseEnter={() => setServicesDropdown(true)}
@@ -83,7 +87,7 @@ const Navbar = () => {
               >
                 SERVICES <FiChevronDown size={18} />
               </button>
-
+ 
               {servicesDropdown && (
                 <div className={desktopDropdownWrapper}>
                   <div className={desktopDropdown}>
@@ -100,7 +104,7 @@ const Navbar = () => {
                 </div>
               )}
             </li>
-
+ 
             <li>
               <Link
                 to="/apply"
@@ -109,7 +113,7 @@ const Navbar = () => {
                 APPLY
               </Link>
             </li>
-
+ 
             <li>
               <Link
                 to="/contact"
@@ -118,7 +122,7 @@ const Navbar = () => {
                 CONTACT US
               </Link>
             </li>
-
+ 
             <li
               className="relative"
               onMouseEnter={() => setCollegesDropdown(true)}
@@ -130,7 +134,7 @@ const Navbar = () => {
               >
                 PARTNERED COLLEGES <FiChevronDown size={18} />
               </button>
-
+ 
               {collegesDropdown && (
                 <div className="absolute right-0 top-full pt-3">
                   <div className={desktopDropdown}>
@@ -149,7 +153,7 @@ const Navbar = () => {
             </li>
           </ul>
         </div>
-
+ 
         <div className="hidden flex-shrink-0 items-center justify-end lg:flex">
           <Link
             to="/login"
@@ -158,7 +162,7 @@ const Navbar = () => {
             LOGIN
           </Link>
         </div>
-
+ 
         <div className="lg:hidden">
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -168,7 +172,7 @@ const Navbar = () => {
           </button>
         </div>
       </div>
-
+ 
       {isMobileMenuOpen && (
         <div className="animate-in slide-in-from-top border-t border-white/10 bg-[#2f4a6d] shadow-2xl duration-300 lg:hidden">
           <ul className="flex flex-col space-y-3 p-6 font-bold tracking-tight">
@@ -183,7 +187,7 @@ const Navbar = () => {
                 </Link>
               </li>
             ))}
-
+ 
             <li>
               <button
                 type="button"
@@ -197,7 +201,7 @@ const Navbar = () => {
                   }`}
                 />
               </button>
-
+ 
               {mobileServicesOpen && (
                 <div className="mt-2 space-y-2 rounded-xl bg-white/5 p-3">
                   {servicesLinks.map((item) => (
@@ -213,7 +217,7 @@ const Navbar = () => {
                 </div>
               )}
             </li>
-
+ 
             <li>
               <button
                 type="button"
@@ -227,7 +231,7 @@ const Navbar = () => {
                   }`}
                 />
               </button>
-
+ 
               {mobileCollegesOpen && (
                 <div className="mt-2 space-y-2 rounded-xl bg-white/5 p-3">
                   {partneredColleges.map((college) => (
@@ -243,7 +247,7 @@ const Navbar = () => {
                 </div>
               )}
             </li>
-
+ 
             <li className="border-t border-white/10 pt-4">
               <Link
                 to="/login"
@@ -259,5 +263,7 @@ const Navbar = () => {
     </nav>
   );
 };
-
+ 
 export default Navbar;
+ 
+ 

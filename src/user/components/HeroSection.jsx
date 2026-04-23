@@ -42,7 +42,7 @@ const HeroSection = () => {
     if (globeRef.current) {
       // Auto-rotate
       globeRef.current.controls().autoRotate = true;
-      globeRef.current.controls().autoRotateSpeed = 0.5;
+      globeRef.current.controls().autoRotateSpeed = 0.4;
       globeRef.current.controls().enableZoom = false;
       
       // Initial position to show India

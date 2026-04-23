@@ -11,7 +11,9 @@ import FileStatus from "../user/pages/FileStatus";
 import Register from "../user/pages/Register";
 import Login from "../user/pages/Login";
 import Apply from "../user/pages/Apply";
-import BhaskarPharmacyCollege from "../user/PartnerColleges/BhaskarPharmacyCollege";
+
+/* ✅ NEW DYNAMIC PAGE */
+import CollegePage from "../user/pages/CollegePage";
 
 /* ================= ADMIN ================= */
 import Layout from "../Admin/components/layout/Layout";
@@ -40,11 +42,10 @@ const AppRoutes = () => {
           <Route path="file-status" element={<FileStatus />} />
           <Route path="register" element={<Register />} />
           <Route path="login" element={<Login />} />
-          <Route path="partnered-colleges" element={<Home />} />
-          <Route
-            path="partnered-colleges/bhaskar-pharmacy-college"
-            element={<BhaskarPharmacyCollege />}
-          />
+
+          {/* ✅ DYNAMIC COLLEGE ROUTE */}
+          <Route path="partnered-colleges/:collegeId" element={<CollegePage />} />
+
         </Route>
 
         {/* ================= ADMIN ROUTES ================= */}
