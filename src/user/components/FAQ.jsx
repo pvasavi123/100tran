@@ -74,27 +74,31 @@ const FAQ = () => {
 
           {/* LEFT SIDE WITH MOTION */}
           <motion.div
-            initial={{ opacity: 0, x: -40 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            className="lg:col-span-1"
-          >
-            <div className="mt-10 p-6 bg-slate-900 rounded-3xl text-white relative overflow-hidden group">
-              <div className="relative z-10">
-                <h4 className="text-xl font-semibold mb-2">
-                  Still have questions?
-                </h4>
-                <p className="text-slate-400 text-sm mb-6">
-                  We're here to help you navigate the transcript process smoothly.
-                </p>
-                <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 transition-colors px-6 py-3 rounded-xl font-medium">
-                  <MessageCircle size={18} />
-                  Contact Support
-                </button>
-              </div>
+  initial={{ opacity: 0, x: -40 }}
+  whileInView={{ opacity: 1, x: 0 }}
+  transition={{ duration: 0.6 }}
+  className="lg:col-span-1 lg:sticky lg:top-24 h-fit"
+>
+            <div className="mt-0 p-8 bg-white rounded-3xl shadow-xl border border-gray-100 hover:shadow-2xl transition">
 
-              <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-blue-600/10 rounded-full blur-2xl"></div>
-            </div>
+  <div className="w-14 h-14 flex items-center justify-center rounded-xl bg-blue-100 text-blue-600 mb-6">
+    <MessageCircle size={22} />
+  </div>
+
+  <h4 className="text-xl font-semibold text-[#2f4a6d] mb-3">
+    Need Help?
+  </h4>
+
+  <p className="text-gray-500 text-sm mb-6">
+    Our support team is ready to guide you through the transcript process step by step.
+  </p>
+
+  <button className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 transition px-6 py-3 rounded-xl font-medium text-white">
+    <MessageCircle size={18} />
+    Contact Support
+  </button>
+
+</div>
           </motion.div>
 
           {/* RIGHT SIDE FAQ WITH STAGGER */}
