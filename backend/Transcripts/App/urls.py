@@ -24,6 +24,8 @@ urlpatterns = [
     path('download/<int:id>/', views.download_document),
     path("colleges/", views.get_colleges),
     path("verifications/", views.get_verified_applications, name="get_verifications"),
+    path("refund/", views.refund_payment),
+    
 
 
 

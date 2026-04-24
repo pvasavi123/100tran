@@ -229,109 +229,251 @@ def login_user(request):
 
 
 from django.http import JsonResponse
-
-import json
-import json
 import razorpay
 from django.conf import settings
 from django.http import JsonResponse
+import json
+
 from django.views.decorators.csrf import csrf_exempt
+import razorpay
+import json
+from django.conf import settings
+from django.http import JsonResponse
 
 
-@csrf_exempt
+@csrf_exempt   # ✅ ADD THIS
 def create_order(request):
-    if request.method == "POST":
+    if request.method != "POST":
+        return JsonResponse({"error": "Invalid method"}, status=405)
+
+    try:
         data = json.loads(request.body)
 
-        amount = int(data.get("amount")) * 100  # paise
+        amount = int(data.get("amount")) * 100
+        application_id = data.get("application_id")
 
-        client = razorpay.Client(
-            auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET)
-        )
+        # 🔒 Validate
+        if not amount:
+            return JsonResponse({"error": "Amount is required"}, status=400)
+
+        client = razorpay.Client(auth=(
+            settings.RAZORPAY_KEY_ID,
+            settings.RAZORPAY_KEY_SECRET
+        ))
 
         order = client.order.create({
             "amount": amount,
             "currency": "INR",
-            "payment_capture": 1,
-
-            # ✅ ADD THESE
-            "receipt": "order_rcptid_11",
-            "notes": {
-                "user": "test_user",
-                "service": "document_verification"
-            }
+            "payment_capture": 1
         })
+
+        print("✅ Order Created:", order)
 
         return JsonResponse({
             "order_id": order["id"],
             "amount": order["amount"]
         })
+
+    except Exception as e:
+        print("🔥 Create Order Error:", str(e))
+        return JsonResponse({"error": str(e)}, status=500)
+    
+import razorpay
+import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
+
+import razorpay
+import json
+from django.conf import settings
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+ 
+client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+ 
+ 
+# ✅ CREATE ORDER
+@csrf_exempt
+def create_order(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+
+        application_id = data.get("application_id")
+        amount = int(data.get("amount", 1)) * 100  # convert to paise
+
+        from .models import Application, Payment
+
+        try:
+            app = Application.objects.get(id=application_id)
+        except Application.DoesNotExist:
+            return JsonResponse({"error": "Invalid application"}, status=400)
+
+        order = client.order.create({
+            "amount": amount,
+            "currency": "INR",
+            "payment_capture": "1"
+        })
+
+        # ✅ SAVE ORDER IN DB
+        Payment.objects.create(
+            application=app,
+            order_id=order["id"],
+            amount=amount,
+            currency="INR",
+            status="created"
+        )
+
+        return JsonResponse({
+            "order_id": order["id"],
+            "amount": amount,
+            "key": settings.RAZORPAY_KEY_ID
+        })
+ 
+# ✅ VERIFY PAYMENT
 @csrf_exempt
 def verify_payment(request):
-    if request.method == "POST":
-        try:
-            data = json.loads(request.body)
+    data = json.loads(request.body)
 
-            razorpay_order_id = data.get("razorpay_order_id")
-            razorpay_payment_id = data.get("razorpay_payment_id")
-            razorpay_signature = data.get("razorpay_signature")
+    razorpay_order_id = data.get("razorpay_order_id")
+    razorpay_payment_id = data.get("razorpay_payment_id")
+    razorpay_signature = data.get("razorpay_signature")
 
-            # ❗ IMPORTANT: validate input
-            if not razorpay_order_id or not razorpay_payment_id or not razorpay_signature:
-                return JsonResponse(
-                    {"status": "failure", "error": "Missing payment fields"},
-                    status=400
-                )
+    params_dict = {
+        "razorpay_order_id": razorpay_order_id,
+        "razorpay_payment_id": razorpay_payment_id,
+        "razorpay_signature": razorpay_signature
+    }
 
-            client = razorpay.Client(
-                auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET)
-            )
+    try:
+        # ✅ Verify signature
+        client.utility.verify_payment_signature(params_dict)
 
-            params_dict = {
-                "razorpay_order_id": razorpay_order_id,
-                "razorpay_payment_id": razorpay_payment_id,
-                "razorpay_signature": razorpay_signature,
-            }
+        from .models import Payment
 
-            # ✅ VERIFY SIGNATURE
-            client.utility.verify_payment_signature(params_dict)
+        payment = Payment.objects.filter(order_id=razorpay_order_id).first()
 
-            # ✅ SUCCESS (SAVE TO DB HERE)
-            print("✅ Payment Verified:", params_dict)
-            
-            # The client should send email or tracking_id as query params
-            email = request.GET.get('email')
-            tracking_id = request.GET.get('tracking_id')
-            
+        if payment:
+            # ✅ Fetch extra details from Razorpay
+            payment_data = client.payment.fetch(razorpay_payment_id)
+
+            payment.payment_id = razorpay_payment_id
+            payment.signature = razorpay_signature
+            payment.status = "paid"
+            payment.captured = True
+            payment.payment_method = payment_data.get("method")
+
+            payment.save()
+
+        return JsonResponse({"status": "success"})
+
+    except Exception as e:
+        print("❌ Verification Error:", str(e))
+
+        # ❗ Mark as failed in DB
+        from .models import Payment
+        payment = Payment.objects.filter(order_id=razorpay_order_id).first()
+        if payment:
+            payment.status = "failed"
+            payment.save()
+
+        return JsonResponse({"status": "failed"})
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+import json
+import razorpay
+from django.conf import settings
+from .models import Payment
+
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+import json
+import razorpay
+from django.conf import settings
+from .models import Payment
+
+client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+
+
+import requests
+from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from django.conf import settings
+import json
+import requests
+from .models import Payment
+
+
+@csrf_exempt
+def refund_payment(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "Invalid method"}, status=405)
+
+    try:
+        data = json.loads(request.body)
+        application_id = data.get("application_id")
+
+        if not application_id:
+            return JsonResponse({"error": "application_id required"}, status=400)
+
+        # ✅ Get latest successful payment
+        payment = Payment.objects.filter(
+            application_id=application_id,
+            status="paid",
+            captured=True
+        ).order_by("-created_at").first()
+
+        if not payment:
+            return JsonResponse({"error": "No successful payment found"}, status=400)
+
+        if not payment.payment_id:
+            return JsonResponse({"error": "Payment ID missing"}, status=400)
+
+        print("---- REFUND DEBUG ----")
+        print("Payment ID:", payment.payment_id)
+
+        # 🔥 Razorpay Refund API (DIRECT CALL)
+        url = f"https://api.razorpay.com/v1/payments/{payment.payment_id}/refund"
+
+        response = requests.post(
+            url,
+            auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET),
+            data={}   # ✅ IMPORTANT: use form-data, NOT json
+        )
+
+        print("Status Code:", response.status_code)
+        print("Response:", response.text)
+
+        # ❌ If error from Razorpay
+        if response.status_code != 200:
             try:
-                if tracking_id:
-                    app = Application.objects.get(tracking_id=tracking_id)
-                elif email:
-                    app = Application.objects.get(email=email)
-                else:
-                    app = None
-                
-                if app:
-                    app.payment_status = "Paid"
-                    app.save()
-            except Application.DoesNotExist:
-                pass
+                error_data = response.json()
+            except:
+                error_data = response.text
 
-            return JsonResponse({"status": "success"})
+            return JsonResponse({
+                "error": error_data
+            }, status=400)
 
-        except razorpay.errors.SignatureVerificationError:
-            return JsonResponse(
-                {"status": "failure", "error": "Signature mismatch"},
-                status=400
-            )
+        refund = response.json()
 
-        except Exception as e:
-            return JsonResponse(
-                {"status": "failure", "error": str(e)},
-                status=500
-            )
+        # ✅ Save refund details
+        payment.refund_id = refund.get("id")
+        payment.refund_status = refund.get("status")
+        payment.status = "refunded"
+        payment.save()
 
+        return JsonResponse({
+            "status": "refund_success",
+            "refund_id": refund.get("id")
+        })
 
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return JsonResponse({"error": str(e)}, status=500)
+ 
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.core.mail import send_mail
@@ -501,7 +643,7 @@ def get_applications(request):
             "agent": app.agent or "Unassigned",
             "district": getattr(app, 'district', 'N/A'), # if added
             "documentsList": [
-                {"id": doc.id, "name": doc.name, "status": "Verified", "url": f"http://192.168.1.13:8000{doc.file.url}"}
+                {"id": doc.id, "name": doc.name, "status": "Verified", "url": f"http://192.168.1.12:8000{doc.file.url}"}
                 for doc in app.documents.all()
             ]
         })

@@ -1221,7 +1221,7 @@ const Step1 = ({ form, goStep, handlePayment }) => (
     <div className="info-panel amber">
       <span className="info-icon">🔒</span>
       <h3>Service Fee</h3>
-      <div className="amount">₹ 1,500</div>
+      <div className="amount">₹ 20</div>
       <p>One-time fee for verification, attestation &amp; processing.<br />100% Secure &bull; Instant confirmation</p>
     </div>
     <div className="timeline">
@@ -1231,7 +1231,7 @@ const Step1 = ({ form, goStep, handlePayment }) => (
     </div>
     <div className="actions">
       <button className="btn-secondary" onClick={() => goStep(0)}>← Back</button>
-      <button className="btn-primary green" onClick={handlePayment}>💳 &nbsp;Pay ₹1,500 Now</button>
+      <button className="btn-primary green" onClick={handlePayment}>💳 &nbsp;Pay ₹1 Now</button>
     </div>
   </div>
 );
@@ -1319,7 +1319,7 @@ const Step2 = ({ appStatus, adminMessage, goStep, onRetry }) => {
   );
 };
 
-const Step3 = ({ reset }) => (
+const Step3 = ({ reset, handleRefund }) => (
   <div>
     <div className="step-header">
       <div className="step-icon icon-purple">🏛️</div>
@@ -1342,6 +1342,17 @@ const Step3 = ({ reset }) => (
     </div>
     <div className="actions">
       <button className="btn-primary" onClick={reset}>+ Start New Request</button>
+      <button
+    className="btn-secondary"
+    style={{
+      marginLeft: "10px",
+      backgroundColor: "#ef4444",
+      color: "#fff"
+    }}
+    onClick={handleRefund}
+  >
+    💸 Refund Payment
+  </button>
     </div>
   </div>
 );
@@ -1602,83 +1613,127 @@ export default function Apply() {
     }
   };
 
-  const handlePayment = async () => {
-    try {
-      // Check if Razorpay is loaded
-      if (!window.Razorpay) {
-        alert("Payment system is loading. Please wait and try again.");
-        return;
-      }
+const handleRefund = async () => {
+  const confirmRefund = window.confirm("Are you sure you want to refund?");
+  if (!confirmRefund) return;
 
-      // Validate applicationId exists
-      if (!applicationId) {
-        alert("No application found. Please submit an application first.");
-        return;
-      }
+  try {
+    const res = await fetch(`http://${window.location.hostname}:8000/api/refund/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        application_id: applicationId
+      }),
+    });
 
-      // Creating payment order for application
-      
-      const res = await fetch(`${API_BASE}/api/create-order/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount: 1500, application_id: applicationId }),
-      });
+    const data = await res.json();
 
-      if (!res.ok) {
-        const errorData = await res.json();
-        // Create order error handled
-        alert(`Failed to create payment order: ${errorData.error || 'Unknown error'}`);
-        return;
-      }
-
-      const data = await res.json();
-      // Order created successfully
-      
-      const options = {
-        key: "rzp_test_Sg6qpBoNrt75cC",
-        amount: data.amount,
-        currency: "INR",
-        order_id: data.order_id,
-        name: "100 Transcripts",
-        description: "Document Verification Fee",
-        handler: async function (response) {
-          // Payment response received
-          try {
-            const verifyRes = await fetch(`${API_BASE}/api/verifys/`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ ...response, application_id: applicationId }),
-            });
-            const verifyData = await verifyRes.json();
-            if (verifyData.status === "success") {
-              alert("Payment Successful ✅");
-              goStep(3);
-            }
-            else {
-              // Payment verification failed
-              alert("Payment verification failed ❌");
-            }
-          } catch (verifyErr) {
-            // Verification error handled
-            alert("Payment verification error ❌");
-          }
-        },
-        prefill: { name: form.fullName, email: form.email, contact: form.phone },
-        theme: { color: "#2563eb" },
-        modal: {
-          ondismiss: function() {
-            // Payment modal dismissed
-          }
-        }
-      };
-      
-      const rzp = new window.Razorpay(options);
-      rzp.open();
-    } catch (err) {
-      // Payment error handled
-      alert(`Payment error: ${err.message || 'Please ensure backend is running and try again.'}`);
+    if (res.ok) {
+      alert(`Refund Successful ✅\nRefund ID: ${data.refund_id}`);
+    } else {
+      alert(data.error || "Refund Failed ❌");
     }
-  };
+
+  } catch (err) {
+    console.error("Refund Error:", err);
+    alert("Refund error ❌");
+  }
+};
+
+ const handlePayment = async () => {
+  try {
+    const res = await fetch(`${API_BASE}/api/create-order/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        amount: 20, // ₹1
+        application_id: applicationId,
+      }),
+    });
+
+    if (!res.ok) {
+      const errData = await res.json();
+      alert(errData.error || "Failed to create order");
+      return;
+    }
+
+    const data = await res.json();
+
+    const options = {
+      key: "rzp_test_Sg6qpBoNrt75cC",
+      amount: data.amount,
+      currency: "INR",
+      order_id: data.order_id,
+
+      name: "100 Transcripts",
+      description: "Document Verification Fee",
+
+      handler: async function (response) {
+        try {
+          const verifyRes = await fetch(`${API_BASE}/api/verifys/`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              application_id: applicationId,
+            }),
+          });
+
+          const verifyData = await verifyRes.json();
+
+          if (verifyRes.ok && verifyData.status === "success") {
+            alert("Payment Successful ✅");
+            goStep(3);
+          } else {
+            alert("Payment Failed ❌");
+          }
+        } catch (err) {
+          alert("Verification error ❌");
+        }
+      },
+
+      prefill: {
+        name: form.fullName,
+        email: form.email,
+        contact: form.phone,
+      },
+
+      theme: {
+        color: "#2563eb",
+      },
+
+      // ✅ FORCE UPI ONLY (Scanner works perfectly)
+      method: {
+        upi: true,
+        card: true,
+        netbanking: false,
+        wallet: false,
+      },
+
+      // ✅ Opens QR / UPI apps directly
+      modal: {
+        ondismiss: function () {
+          console.log("Payment popup closed");
+        },
+      },
+    };
+
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+
+  } catch (err) {
+    console.error("Payment Error:", err);
+    alert("Payment error ❌");
+  }
+};
 
   const reset = () => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -1774,7 +1829,7 @@ export default function Apply() {
                   handlePayment={handlePayment}
                 />
               )}
-              {activeStep === 3 && <Step3 reset={reset} />}
+              {activeStep === 3 && <Step3 reset={reset} handleRefund={handleRefund} />}
               {activeStep === 4 && <Step4 form={form} reset={reset} />}
             </div>
 

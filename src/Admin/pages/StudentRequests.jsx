@@ -411,7 +411,7 @@ Please check your email for detailed information or contact us if you have any q
                           </button>
                           <button
                             onClick={() => {
-                              window.open(`http://192.168.1.13:8000/api/download/${doc.id}/`);
+                              window.open(`http://192.168.1.43:8000/api/download/${doc.id}/`);
                             }}
                             className="px-3 py-1.5 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold hover:bg-slate-200 transition"
                           >
